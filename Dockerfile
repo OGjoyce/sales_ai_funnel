@@ -41,7 +41,7 @@ COPY . .
 RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader --ignore-platform-reqs --no-scripts
 
 # Create necessary directories with proper permissions
-RUN mkdir -p storage/logs storage/app storage/framework/{cache,sessions,views} bootstrap/cache \
+RUN mkdir -p storage/logs storage/app storage/framework/{cache,sessions,views} bootstrap/cache /var/log/supervisor \
     && chown -R www-data:www-data storage bootstrap/cache public
 
 # Laravel optimization
