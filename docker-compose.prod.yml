@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: ankane/pgvector:pg16
+    image: ramsrib/pgvector:latest
     container_name: velora_postgres
     restart: always
     environment:
