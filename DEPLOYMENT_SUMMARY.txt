@@ -1,0 +1,246 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    VELORA VPS DEPLOYMENT - COMPLETE                        ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+PROJECT STACK:
+  Frontend: React 19 + Vite + Tailwind CSS
+  Backend: Laravel 13 + Inertia.js + PHP 8.3
+  Database: PostgreSQL 16 with pgvector
+  Cache: Redis 7
+  Service: Python MCP server (FastMCP)
+  Infrastructure: Docker + Nginx + Let's Encrypt SSL
+
+VPS DETAILS:
+  Domain: velora.guatemalia.com
+  IP: 18.221.208.60
+  User: ubuntu
+  SSH Key: SSH-Carlo (1).ppk
+
+═════════════════════════════════════════════════════════════════════════════
+
+📦 FILES CREATED:
+
+Docker Configuration:
+  ✅ Dockerfile                    - Laravel production image (PHP-FPM)
+  ✅ Dockerfile.python             - Python MCP server image
+  ✅ docker-compose.prod.yml       - Production services orchestration
+  ✅ .dockerignore                 - Docker build exclusions
+
+Nginx Configuration:
+  ✅ docker/nginx.conf             - Nginx main configuration
+  ✅ docker/conf.d/velora.conf    - HTTPS/SSL server config
+  ✅ docker/supervisord.conf       - Process management config
+
+Deployment Scripts:
+  ✅ deploy.sh                     - Automated VPS setup (MAIN SCRIPT)
+  ✅ upload-to-vps.sh              - File upload helper
+
+Documentation:
+  ✅ DEPLOYMENT.md                 - Complete deployment guide
+  ✅ DEPLOYMENT_CHECKLIST.md       - Step-by-step checklist
+  ✅ DEPLOYMENT_SUMMARY.txt        - This file
+
+═════════════════════════════════════════════════════════════════════════════
+
+🚀 QUICK START (3 STEPS):
+
+1. CONVERT SSH KEY (if needed):
+   ─────────────────────────────────────────────────────────────────────
+   ssh-keygen -i -f "SSH-Carlo (1).ppk" > ssh-carlo.pem
+   chmod 600 ssh-carlo.pem
+
+2. UPLOAD TO VPS:
+   ─────────────────────────────────────────────────────────────────────
+   cd /home/deck/sales_ai_funnel
+   ./upload-to-vps.sh ~/path/to/ssh-carlo.pem ubuntu 18.221.208.60
+
+3. DEPLOY ON VPS:
+   ─────────────────────────────────────────────────────────────────────
+   ssh -i ~/path/to/ssh-carlo.pem ubuntu@18.221.208.60
+   cd /var/www/velora
+   sudo bash deploy.sh
+
+⏱️  Total time: ~15-20 minutes
+
+═════════════════════════════════════════════════════════════════════════════
+
+📋 WHAT THE DEPLOY SCRIPT DOES:
+
+Phase 1: System Setup (3-5 min)
+  ✓ Update system packages
+  ✓ Install Docker & Docker Compose
+  ✓ Setup Docker daemon
+
+Phase 2: Application Setup (5-10 min)
+  ✓ Create /var/www/velora directory
+  ✓ Generate .env configuration
+  ✓ Build Docker images (app + mcp-server)
+  ✓ Start PostgreSQL & Redis
+  ✓ Start application containers
+  ✓ Run database migrations
+
+Phase 3: SSL Certificate (2-3 min)
+  ✓ Obtain free SSL from Let's Encrypt
+  ✓ Configure Nginx with HTTPS
+  ✓ Setup auto-renewal (every 12 hours)
+
+Phase 4: Finalization (1-2 min)
+  ✓ Configure systemd service for auto-restart
+  ✓ Setup log rotation
+  ✓ Verify installation
+
+═════════════════════════════════════════════════════════════════════════════
+
+🔐 DOCKER SERVICES DEPLOYED:
+
+1. nginx (Port 80/443)
+   - Reverse proxy & SSL termination
+   - Serves static files with caching
+   - Forwards dynamic requests to Laravel
+
+2. app (Port 8000 - internal)
+   - Laravel 13 + PHP 8.3 FPM
+   - Supervisord manages:
+     * PHP-FPM
+     * 2x Queue workers (Redis)
+     * Scheduler (cron-like)
+
+3. mcp-server (Port 8001 - internal)
+   - Python FastMCP server
+   - Handles OpenClaw integration
+   - AI model communication
+
+4. postgres (Port 5432 - internal)
+   - PostgreSQL 16 + pgvector
+   - Persistent storage
+   - Health checks enabled
+
+5. redis (Port 6379 - internal)
+   - Caching
+   - Queue backend
+   - AOF persistence
+
+6. certbot
+   - Automatic SSL renewal
+   - Runs every 12 hours
+   - No manual renewal needed
+
+═════════════════════════════════════════════════════════════════════════════
+
+⚙️  ENVIRONMENT CONFIGURATION:
+
+The deploy script automatically:
+  ✓ Generates APP_KEY
+  ✓ Sets APP_ENV=production
+  ✓ Sets APP_DEBUG=false
+  ✓ Configures database (PostgreSQL)
+  ✓ Configures cache (Redis)
+  ✓ Configures queue (Redis)
+
+You should manually update in .env:
+  • MAIL_* - Email configuration
+  • OPENAI_API_KEY - Your API key
+  • OPENCLAW_* - OpenClaw gateway settings
+  • MCP_SERVICE_TOKEN - Token for MCP service
+
+═════════════════════════════════════════════════════════════════════════════
+
+✅ VERIFICATION AFTER DEPLOYMENT:
+
+1. Check services running:
+   docker compose -f docker-compose.prod.yml ps
+
+2. Test HTTPS:
+   curl https://velora.guatemalia.com
+
+3. View logs:
+   docker compose -f docker-compose.prod.yml logs -f app
+
+4. Access application:
+   https://velora.guatemalia.com
+
+5. Check SSL certificate:
+   openssl s_client -connect velora.guatemalia.com:443 -showcerts
+
+═════════════════════════════════════════════════════════════════════════════
+
+📝 USEFUL COMMANDS AFTER DEPLOYMENT:
+
+View logs:
+  docker compose -f docker-compose.prod.yml logs -f
+
+SSH into app:
+  docker compose -f docker-compose.prod.yml exec app sh
+
+Access database:
+  docker compose -f docker-compose.prod.yml exec postgres psql -U sales -d sales_ai_funnel
+
+Run artisan:
+  docker compose -f docker-compose.prod.yml exec app php artisan <command>
+
+Restart services:
+  docker compose -f docker-compose.prod.yml restart
+
+Stop all:
+  docker compose -f docker-compose.prod.yml down
+
+Start all:
+  docker compose -f docker-compose.prod.yml up -d
+
+═════════════════════════════════════════════════════════════════════════════
+
+🛡️  SECURITY FEATURES:
+
+✓ HTTPS/TLS 1.2+ (Let's Encrypt free SSL)
+✓ Security headers (HSTS, X-Frame-Options, X-Content-Type-Options, etc.)
+✓ Non-privileged nginx process
+✓ Database password protected
+✓ Sensitive files blocked (.env, .git, etc.)
+✓ Automatic SSL renewal
+✓ Production optimizations enabled
+
+═════════════════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTATION FILES:
+
+- DEPLOYMENT.md
+  Complete guide with all commands, troubleshooting, backups, etc.
+
+- DEPLOYMENT_CHECKLIST.md
+  Step-by-step checklist for the entire deployment process
+
+- docker-compose.prod.yml
+  Service configuration with all environment variables
+
+═════════════════════════════════════════════════════════════════════════════
+
+🎯 NEXT STEPS:
+
+1. Convert SSH key if needed (see Quick Start above)
+2. Prepare the ssh-carlo.pem file on your machine
+3. Run: ./upload-to-vps.sh ~/path/to/ssh-carlo.pem ubuntu 18.221.208.60
+4. SSH into VPS: ssh -i ssh-carlo.pem ubuntu@18.221.208.60
+5. Run: cd /var/www/velora && sudo bash deploy.sh
+6. Wait for completion (~15-20 minutes)
+7. Verify at: https://velora.guatemalia.com
+
+═════════════════════════════════════════════════════════════════════════════
+
+⚠️  IMPORTANT NOTES:
+
+• DNS: Update your domain DNS to point to 18.221.208.60
+• API Keys: Add OpenAI, OpenClaw tokens to .env after deployment
+• Backups: Setup regular backups of /var/www/velora directory
+• Updates: Pull latest code and rebuild Docker images as needed
+• Monitoring: Check logs regularly with: docker compose logs -f app
+
+═════════════════════════════════════════════════════════════════════════════
+
+✨ YOUR APPLICATION IS READY FOR DEPLOYMENT!
+
+All Docker files, configurations, and deployment scripts are complete.
+The deploy.sh script handles everything automatically.
+
+Good luck! 🚀
+
+═════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,191 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: ankane/pgvector:pg16
+    container_name: velora_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - velora_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: velora_redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - velora_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: velora_app
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      openclaw:
+        condition: service_healthy
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_ENV: ${APP_ENV}
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_URL: ${APP_URL}
+
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+      CACHE_STORE: redis
+      SESSION_DRIVER: database
+      QUEUE_CONNECTION: redis
+
+      MAIL_MAILER: ${MAIL_MAILER}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL}
+      OPENCLAW_GATEWAY_URL: http://openclaw:18789
+      OPENCLAW_API_KEY: ${OPENCLAW_API_KEY}
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_SCRAPING_AGENT_ID: ${OPENCLAW_SCRAPING_AGENT_ID}
+      OPENCLAW_LINA_AGENT_ID: ${OPENCLAW_LINA_AGENT_ID}
+      OPENCLAW_ALLERIA_AGENT_ID: ${OPENCLAW_ALLERIA_AGENT_ID}
+      OPENCLAW_COMMS_OWNER_AGENT_ID: ${OPENCLAW_COMMS_OWNER_AGENT_ID}
+      OPENCLAW_DEFAULT_AGENT_ID: ${OPENCLAW_DEFAULT_AGENT_ID}
+      OPENCLAW_COMMS_AGENT_ID: ${OPENCLAW_COMMS_AGENT_ID}
+      OPENCLAW_WEBHOOK_SECRET: ${OPENCLAW_WEBHOOK_SECRET}
+      OPENCLAW_HTTP_TIMEOUT_SECONDS: ${OPENCLAW_HTTP_TIMEOUT_SECONDS}
+      MCP_SERVICE_TOKEN: ${MCP_SERVICE_TOKEN}
+    volumes:
+      - ./storage:/app/storage
+      - ./bootstrap/cache:/app/bootstrap/cache
+    networks:
+      - velora_network
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  openclaw:
+    build:
+      context: .
+      dockerfile: Dockerfile.openclaw
+    container_name: velora_openclaw
+    restart: always
+    environment:
+      NODE_ENV: production
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+      - ./openclaw/.openclaw:/home/node/.openclaw:rw
+    networks:
+      - velora_network
+    ports:
+      # Internal only - not exposed to public
+      - "127.0.0.1:18789:18789"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:18789/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: velora_mcp
+    restart: always
+    depends_on:
+      openclaw:
+        condition: service_healthy
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENCLAW_GATEWAY_URL: http://openclaw:18789
+      OPENCLAW_API_KEY: ${OPENCLAW_API_KEY}
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_SCRAPING_AGENT_ID: ${OPENCLAW_SCRAPING_AGENT_ID}
+      OPENCLAW_LINA_AGENT_ID: ${OPENCLAW_LINA_AGENT_ID}
+      OPENCLAW_ALLERIA_AGENT_ID: ${OPENCLAW_ALLERIA_AGENT_ID}
+      OPENCLAW_COMMS_OWNER_AGENT_ID: ${OPENCLAW_COMMS_OWNER_AGENT_ID}
+      OPENCLAW_DEFAULT_AGENT_ID: ${OPENCLAW_DEFAULT_AGENT_ID}
+      OPENCLAW_COMMS_AGENT_ID: ${OPENCLAW_COMMS_AGENT_ID}
+      OPENCLAW_WEBHOOK_SECRET: ${OPENCLAW_WEBHOOK_SECRET}
+      OPENCLAW_HTTP_TIMEOUT_SECONDS: ${OPENCLAW_HTTP_TIMEOUT_SECONDS}
+    networks:
+      - velora_network
+    ports:
+      - "127.0.0.1:8001:8001"
+
+  nginx:
+    image: nginx:alpine
+    container_name: velora_nginx
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/conf.d:/etc/nginx/conf.d:ro
+      - ./public:/app/public:ro
+      - ./docker/ssl:/etc/nginx/ssl:ro
+      - certbot_data:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    networks:
+      - velora_network
+
+  certbot:
+    image: certbot/certbot
+    container_name: velora_certbot
+    restart: unless-stopped
+    volumes:
+      - certbot_data:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $$!; done"
+    networks:
+      - velora_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  certbot_data:
+  certbot_www:
+  openclaw_data:
+
+networks:
+  velora_network:
+    driver: bridge
