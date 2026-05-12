@@ -116,11 +116,11 @@ function SectionTitle({
                     {kicker}
                 </p>
             ) : null}
-            <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            <h2 className="text-2xl font-semibold tracking-tight text-balance text-foreground sm:text-3xl">
                 {title}
             </h2>
             {subtitle ? (
-                <p className="mx-auto mt-3 max-w-2xl text-pretty text-sm text-muted-foreground sm:text-base">
+                <p className="mx-auto mt-3 max-w-2xl text-sm text-pretty text-muted-foreground sm:text-base">
                     {subtitle}
                 </p>
             ) : null}
@@ -140,7 +140,11 @@ export default function Landing({
     const appName = typeof name === 'string' ? name : 'Sales AI Funnel';
     const isAuth = Boolean(auth?.user);
 
-    const primaryCtaHref = isAuth ? kanban() : canRegister ? register() : login();
+    const primaryCtaHref = isAuth
+        ? kanban()
+        : canRegister
+          ? register()
+          : login();
     const primaryCtaLabel = isAuth
         ? 'Abrir embudo'
         : canRegister
@@ -152,7 +156,10 @@ export default function Landing({
             <Head title={appName} />
             <div className="relative min-h-svh overflow-x-hidden">
                 {/* Background */}
-                <div className="pointer-events-none absolute inset-0" aria-hidden>
+                <div
+                    className="pointer-events-none absolute inset-0"
+                    aria-hidden
+                >
                     <div className="absolute -top-40 left-1/2 h-[34rem] w-[56rem] -translate-x-1/2 rounded-full bg-gradient-to-b from-primary/20 via-primary/10 to-transparent blur-3xl" />
                     <div className="absolute top-1/3 -right-24 h-72 w-72 rounded-full bg-foreground/5 blur-3xl" />
                     <div className="absolute bottom-0 left-0 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
@@ -209,30 +216,35 @@ export default function Landing({
 
                 <main className="relative z-10">
                     {/* 1) HERO */}
-                    <section className="mx-auto max-w-6xl px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
-                        <div className="mx-auto max-w-3xl text-center animate-in fade-in slide-in-from-bottom-2 duration-700">
+                    <section className="mx-auto max-w-6xl px-4 pt-16 pb-16 sm:px-6 sm:pt-24 sm:pb-20">
+                        <div className="mx-auto max-w-3xl animate-in text-center duration-700 fade-in slide-in-from-bottom-2">
                             <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
                                 <ShieldCheck className="size-3.5 text-primary" />
                                 Embudo + IA + multicanal (WhatsApp-first)
                             </p>
-                            <h1 className="text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+                            <h1 className="text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-5xl md:text-6xl">
                                 Paz mental para
-                                <span className="text-primary"> vender mejor</span>
+                                <span className="text-primary">
+                                    {' '}
+                                    vender mejor
+                                </span>
                             </h1>
-                            <p className="mx-auto mt-5 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
-                                Vender es más fácil cuando tu embudo, tu catálogo y tus chats viven en un solo sistema: claro, elegante y rápido.
+                            <p className="mx-auto mt-5 max-w-xl text-base text-pretty text-muted-foreground sm:text-lg">
+                                Vender es más fácil cuando tu embudo, tu
+                                catálogo y tus chats viven en un solo sistema:
+                                claro, elegante y rápido.
                             </p>
                             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
                                 <Link
                                     href={primaryCtaHref}
-                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:opacity-95 hover:-translate-y-0.5"
+                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95"
                                 >
                                     {primaryCtaLabel}
                                     <ArrowRight className="size-4" />
                                 </Link>
                                 <Link
                                     href={isAuth ? kanban() : login()}
-                                    className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-card/70 px-6 text-sm font-semibold text-foreground backdrop-blur transition-[border-color,box-shadow] hover:border-primary/35"
+                                    className="premium-outline inline-flex h-11 items-center justify-center rounded-xl px-6 text-sm font-semibold text-foreground"
                                 >
                                     Ver demo
                                 </Link>
@@ -240,26 +252,29 @@ export default function Landing({
 
                             {/* 2) Social proof */}
                             <div className="mt-10 grid grid-cols-2 gap-3 text-left sm:grid-cols-4">
-                                {['Seguimiento', 'Kanban', 'Catálogo', 'Handoff humano'].map(
-                                    (label) => (
-                                        <div
-                                            key={label}
-                                            className="rounded-2xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground shadow-sm backdrop-blur"
-                                        >
-                                            <span className="block text-xs font-semibold tracking-wide text-foreground">
-                                                {label}
-                                            </span>
-                                            <span className="mt-1 block text-xs">
-                                                Hecho para cerrar
-                                            </span>
-                                        </div>
-                                    ),
-                                )}
+                                {[
+                                    'Seguimiento',
+                                    'Kanban',
+                                    'Catálogo',
+                                    'Handoff humano',
+                                ].map((label) => (
+                                    <div
+                                        key={label}
+                                        className="rounded-2xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground shadow-sm backdrop-blur"
+                                    >
+                                        <span className="block text-xs font-semibold tracking-wide text-foreground">
+                                            {label}
+                                        </span>
+                                        <span className="mt-1 block text-xs">
+                                            Hecho para cerrar
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
                         {/* 3) Visuals / product in action */}
-                        <div className="mx-auto mt-12 max-w-5xl animate-in fade-in slide-in-from-bottom-2 fill-mode-both duration-700 [animation-delay:200ms]">
+                        <div className="mx-auto mt-12 max-w-5xl animate-in duration-700 fill-mode-both [animation-delay:200ms] fade-in slide-in-from-bottom-2">
                             <div className="grid gap-4 md:grid-cols-12">
                                 <div className="md:col-span-7">
                                     <div className="glass-panel relative overflow-hidden rounded-3xl">
@@ -272,7 +287,7 @@ export default function Landing({
                                         />
                                     </div>
                                 </div>
-                                <div className="md:col-span-5 grid gap-4">
+                                <div className="grid gap-4 md:col-span-5">
                                     <div className="glass-panel relative overflow-hidden rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
                                         <img
@@ -310,7 +325,7 @@ export default function Landing({
                                     key={b.title}
                                     className={cn(
                                         'glass-panel group relative overflow-hidden rounded-2xl p-6 transition-[border-color,box-shadow] hover:border-primary/35',
-                                        'animate-in fade-in slide-in-from-bottom-2 fill-mode-both',
+                                        'animate-in fill-mode-both fade-in slide-in-from-bottom-2',
                                     )}
                                     style={{
                                         animationDelay: `${100 + i * 75}ms`,
@@ -358,6 +373,91 @@ export default function Landing({
                         </div>
                     </section>
 
+                    {/* 5.5) Integrations + ICP */}
+                    <section className="mx-auto max-w-6xl px-4 pb-6 sm:px-6">
+                        <SectionTitle
+                            kicker="Encaje"
+                            title="Hecho para negocios con volumen de chats"
+                            subtitle="Si vendes por WhatsApp, DM o email, esto te da orden: pipeline, catálogo, contexto y seguimiento."
+                        />
+
+                        <div className="mx-auto mt-10 grid gap-4 lg:grid-cols-12">
+                            <div className="glass-panel lg:col-span-7 rounded-3xl p-6">
+                                <h3 className="text-lg font-semibold text-foreground">
+                                    Ideal para
+                                </h3>
+                                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                                    {[
+                                        {
+                                            title: 'D2C / Catálogo',
+                                            desc: 'Muchos SKUs, cotización rápida, seguimiento y handoff.',
+                                        },
+                                        {
+                                            title: 'Servicios',
+                                            desc: 'Calificación, agenda, propuesta, y “siguiente paso” claro.',
+                                        },
+                                        {
+                                            title: 'Operaciones',
+                                            desc: 'Estandariza respuestas, reduce errores y acelera cierres.',
+                                        },
+                                        {
+                                            title: 'Equipos pequeños',
+                                            desc: 'Un inbox + reglas + pipeline para no perder oportunidades.',
+                                        },
+                                    ].map((it) => (
+                                        <li
+                                            key={it.title}
+                                            className="rounded-2xl border border-border/60 bg-card/60 p-4"
+                                        >
+                                            <p className="text-sm font-semibold text-foreground">
+                                                {it.title}
+                                            </p>
+                                            <p className="mt-1 text-xs text-muted-foreground">
+                                                {it.desc}
+                                            </p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="glass-panel lg:col-span-5 rounded-3xl p-6">
+                                <h3 className="text-lg font-semibold text-foreground">
+                                    Integraciones típicas
+                                </h3>
+                                <p className="mt-2 text-sm text-muted-foreground">
+                                    Conecta los canales donde ya vendes. (Disponibles según tu
+                                    proveedor y flujo.)
+                                </p>
+                                <div className="mt-5 flex flex-wrap gap-2">
+                                    {[
+                                        { icon: MessageCircle, label: 'WhatsApp' },
+                                        { icon: Mail, label: 'Email / Gmail' },
+                                        { icon: LayoutGrid, label: 'Sheets (registro)' },
+                                        { icon: Zap, label: 'Webhooks / API' },
+                                    ].map((chip) => (
+                                        <span
+                                            key={chip.label}
+                                            className="premium-outline inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-foreground"
+                                        >
+                                            <chip.icon className="size-3.5 text-primary" />
+                                            {chip.label}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                <div className="mt-6 rounded-2xl border border-border/60 bg-card/60 p-4">
+                                    <p className="text-xs font-semibold text-foreground">
+                                        Señal de sistema premium
+                                    </p>
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                        Cada lead vive en una ficha con contexto, estado y la
+                                        acción recomendada (no “mensajes sueltos”).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     {/* 6) Testimonials */}
                     <section className="border-y border-border/60 bg-muted/25 py-16">
                         <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -396,31 +496,35 @@ export default function Landing({
                             subtitle="Puedes empezar simple y escalar cuando el embudo ya esté funcionando."
                         />
                         <div className="mt-10 grid gap-4 lg:grid-cols-3">
-                            {[{
-                                title: 'Starter',
-                                price: '—',
-                                items: [
-                                    'Kanban + etapas',
-                                    'Leads manuales',
-                                    'Catálogo básico',
-                                ],
-                            }, {
-                                title: 'Pro',
-                                price: '—',
-                                items: [
-                                    'IA en el CRM',
-                                    'Plantillas de seguimiento',
-                                    'Handoff humano',
-                                ],
-                            }, {
-                                title: 'Ops',
-                                price: '—',
-                                items: [
-                                    'WhatsApp-first',
-                                    'Reglas de calificación',
-                                    'Logging a Sheets',
-                                ],
-                            }].map((p) => (
+                            {[
+                                {
+                                    title: 'Starter',
+                                    price: '—',
+                                    items: [
+                                        'Kanban + etapas',
+                                        'Leads manuales',
+                                        'Catálogo básico',
+                                    ],
+                                },
+                                {
+                                    title: 'Pro',
+                                    price: '—',
+                                    items: [
+                                        'IA en el CRM',
+                                        'Plantillas de seguimiento',
+                                        'Handoff humano',
+                                    ],
+                                },
+                                {
+                                    title: 'Ops',
+                                    price: '—',
+                                    items: [
+                                        'WhatsApp-first',
+                                        'Reglas de calificación',
+                                        'Logging a Sheets',
+                                    ],
+                                },
+                            ].map((p) => (
                                 <div
                                     key={p.title}
                                     className={cn(
@@ -440,7 +544,10 @@ export default function Landing({
                                     </div>
                                     <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
                                         {p.items.map((it) => (
-                                            <li key={it} className="flex items-start gap-2">
+                                            <li
+                                                key={it}
+                                                className="flex items-start gap-2"
+                                            >
                                                 <span className="mt-1 size-1.5 rounded-full bg-primary" />
                                                 <span>{it}</span>
                                             </li>
@@ -448,7 +555,7 @@ export default function Landing({
                                     </ul>
                                     <Link
                                         href={primaryCtaHref}
-                                        className="premium-shimmer-ring mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:opacity-95 hover:-translate-y-0.5"
+                                        className="premium-shimmer-ring mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95"
                                     >
                                         Empezar
                                         <ArrowRight className="size-4" />
@@ -490,11 +597,12 @@ export default function Landing({
                                 ¿Listo para ordenar tu funnel?
                             </h2>
                             <p className="max-w-md text-sm text-muted-foreground">
-                                Entra, configura tus etapas y deja que la IA haga el trabajo repetitivo.
+                                Entra, configura tus etapas y deja que la IA
+                                haga el trabajo repetitivo.
                             </p>
                             <Link
                                 href={primaryCtaHref}
-                                className="premium-shimmer-ring inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:opacity-95 hover:-translate-y-0.5"
+                                className="premium-shimmer-ring inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95"
                             >
                                 {primaryCtaLabel}
                                 <ArrowRight className="size-4" />
@@ -505,7 +613,8 @@ export default function Landing({
                     {/* 10) Footer */}
                     <footer className="border-t border-border/60 py-10 text-center text-xs text-muted-foreground">
                         <p>
-                            © {new Date().getFullYear()} {appName}. Elegant funnel skin: corinto + crema + negro.
+                            © {new Date().getFullYear()} {appName}. Elegant
+                            funnel skin: corinto + crema + negro.
                         </p>
                     </footer>
                 </main>
