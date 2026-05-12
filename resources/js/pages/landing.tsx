@@ -280,7 +280,7 @@ export default function Landing({
                                     <div className="glass-panel relative overflow-hidden rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
                                         <img
-                                            src="https://images.unsplash.com/photo-1554774853-b414d4d9b89b?auto=format&fit=crop&w=1800&q=80"
+                                            src="/landing/Screenshot_20260512_102554.png"
                                             alt="Dashboard premium"
                                             className="h-[22rem] w-full object-cover opacity-95"
                                             loading="lazy"
@@ -291,7 +291,7 @@ export default function Landing({
                                     <div className="glass-panel relative overflow-hidden rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
                                         <img
-                                            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80"
+                                            src="/landing/Screenshot_20260512_102707.png"
                                             alt="Insights"
                                             className="h-44 w-full object-cover"
                                             loading="lazy"
@@ -300,7 +300,7 @@ export default function Landing({
                                     <div className="glass-panel relative overflow-hidden rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
                                         <img
-                                            src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1400&q=80"
+                                            src="/landing/Screenshot_20260512_102707.png"
                                             alt="Automation"
                                             className="h-44 w-full object-cover"
                                             loading="lazy"
