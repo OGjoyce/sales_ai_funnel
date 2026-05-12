@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: ankane/pgvector:pg16
+    container_name: sales_ai_funnel_pg
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: sales_ai_funnel
+      POSTGRES_USER: sales
+      POSTGRES_PASSWORD: sales
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
