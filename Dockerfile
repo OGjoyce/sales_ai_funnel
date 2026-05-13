@@ -23,7 +23,8 @@ RUN docker-php-ext-install \
     pdo_pgsql \
     mbstring \
     bcmath \
-    pcntl
+    pcntl \
+    intl
 
 RUN pecl install redis && docker-php-ext-enable redis && \
     apk del $PHPIZE_DEPS
@@ -44,10 +45,10 @@ RUN composer install --no-dev --no-interaction --no-progress --optimize-autoload
 RUN mkdir -p storage/logs storage/app storage/framework/{cache,sessions,views} bootstrap/cache /var/log/supervisor \
     && chown -R www-data:www-data storage bootstrap/cache public
 
-# Laravel optimization
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Laravel optimization (disabled for Docker - will run after DB is available)
+# RUN php artisan config:cache \
+#     && php artisan route:cache \
+#     && php artisan view:cache
 
 # Copy supervisord config
 COPY docker/supervisord.conf /etc/supervisord.conf
