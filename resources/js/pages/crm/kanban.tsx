@@ -1169,10 +1169,24 @@ export default function CrmKanban() {
                                                                             {...p.dragHandleProps}
                                                                             className={cn(
                                                                                 // No transition-all: @hello-pangea/dnd drives transform in real time; animating it breaks drag/drop.
-                                                                                'cursor-grab rounded-lg border border-border/50 bg-background/80 p-3 text-left shadow-md backdrop-blur-md transition-[border-color,box-shadow,opacity] duration-200 hover:border-primary/25 hover:shadow-lg active:cursor-grabbing dark:border-arc/12 dark:bg-abyss/45 dark:hover:border-arc/35 dark:hover:shadow-md',
+                                                                                'premium-lead-card cursor-grab rounded-lg border border-border/50 bg-background/80 p-3 text-left shadow-md backdrop-blur-md transition-[border-color,box-shadow,opacity] duration-200 hover:border-primary/25 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 active:cursor-grabbing dark:border-arc/12 dark:bg-abyss/45 dark:hover:border-arc/35 dark:hover:shadow-md',
                                                                                 s.isDragging &&
                                                                                     'ring-2 ring-plasma/60 shadow-xl',
                                                                             )}
+                                                                            role="button"
+                                                                            tabIndex={0}
+                                                                            onKeyDown={(e) => {
+                                                                                if (
+                                                                                    e.key ===
+                                                                                        'Enter' ||
+                                                                                    e.key === ' '
+                                                                                ) {
+                                                                                    e.preventDefault();
+                                                                                    void openDetail(
+                                                                                        lead.id,
+                                                                                    );
+                                                                                }
+                                                                            }}
                                                                             onClick={() =>
                                                                                 void openDetail(
                                                                                     lead.id,

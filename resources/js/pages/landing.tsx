@@ -276,7 +276,7 @@ export default function Landing({
                                 ].map((label) => (
                                     <div
                                         key={label}
-                                        className="rounded-2xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground shadow-sm backdrop-blur"
+                                        className="rounded-2xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground shadow-sm backdrop-blur transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md motion-reduce:hover:translate-y-0"
                                     >
                                         <span className="block text-xs font-semibold tracking-wide text-foreground">
                                             {label}
@@ -340,7 +340,7 @@ export default function Landing({
                                 <article
                                     key={b.title}
                                     className={cn(
-                                        'glass-panel group relative overflow-hidden rounded-2xl p-6 transition-[border-color,box-shadow] hover:border-primary/35',
+                                        'glass-panel group relative overflow-hidden rounded-2xl p-6 transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_24px_70px_rgba(5,5,6,0.10)] motion-reduce:hover:translate-y-0',
                                         'animate-in fill-mode-both fade-in slide-in-from-bottom-2',
                                     )}
                                     style={{

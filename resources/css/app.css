@@ -468,6 +468,32 @@
     position: relative;
 }
 
+/* CRM lead card: premium hover without animating transforms (safe with dnd) */
+.premium-lead-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-lead-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        80% 70% at 20% 0%,
+        rgba(107, 31, 42, 0.12),
+        transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 220ms ease;
+    pointer-events: none;
+}
+
+@media (hover: hover) {
+    .premium-lead-card:hover::before {
+        opacity: 1;
+    }
+}
+
 .premium-shimmer-ring:focus-visible {
     outline: none;
     box-shadow:
@@ -517,7 +543,8 @@
     }
 
     .glass-panel,
-    .premium-outline {
+    .premium-outline,
+    .premium-lead-card::before {
         transition: none !important;
         transform: none !important;
     }
