@@ -1,10 +1,9 @@
 import {
     DragDropContext,
     Draggable,
-    Droppable
-    
+    Droppable,
 } from '@hello-pangea/dnd';
-import type {DropResult} from '@hello-pangea/dnd';
+import type { DropResult } from '@hello-pangea/dnd';
 import { Head, usePage } from '@inertiajs/react';
 import { Bot, Loader2, Mail, MessageCircle, UserPlus } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -1133,7 +1132,7 @@ export default function CrmKanban() {
                                                 ref={provided.innerRef}
                                                 {...provided.droppableProps}
                                                 className={cn(
-                                                    'flex w-72 shrink-0 flex-col rounded-xl border border-border/40 bg-card/70 shadow-lg backdrop-blur-xl transition-shadow duration-300 dark:border-arc/15 dark:bg-nebula/25 dark:shadow-[0_8px_32px_rgba(13,7,32,0.35)]',
+                                                    'glass-panel flex w-72 shrink-0 flex-col rounded-2xl transition-[box-shadow] duration-300 dark:border-arc/15 dark:bg-nebula/25 dark:shadow-[0_8px_32px_rgba(13,7,32,0.35)]',
                                                     accent,
                                                     snap.isDraggingOver &&
                                                         'ring-2 ring-arc/50 ring-offset-2 ring-offset-transparent dark:shadow-[0_0_24px_rgba(155,110,245,0.25)]',
@@ -1170,7 +1169,7 @@ export default function CrmKanban() {
                                                                             {...p.dragHandleProps}
                                                                             className={cn(
                                                                                 // No transition-all: @hello-pangea/dnd drives transform in real time; animating it breaks drag/drop.
-                                                                                'cursor-grab rounded-lg border border-border/50 bg-background/80 p-3 text-left shadow-md backdrop-blur-md transition-[border-color,box-shadow,opacity] duration-200 active:cursor-grabbing dark:border-arc/12 dark:bg-abyss/45 dark:hover:border-arc/35 dark:hover:shadow-md',
+                                                                                'cursor-grab rounded-lg border border-border/50 bg-background/80 p-3 text-left shadow-md backdrop-blur-md transition-[border-color,box-shadow,opacity] duration-200 hover:border-primary/25 hover:shadow-lg active:cursor-grabbing dark:border-arc/12 dark:bg-abyss/45 dark:hover:border-arc/35 dark:hover:shadow-md',
                                                                                 s.isDragging &&
                                                                                     'ring-2 ring-plasma/60 shadow-xl',
                                                                             )}

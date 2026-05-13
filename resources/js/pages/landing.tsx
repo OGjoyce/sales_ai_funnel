@@ -250,6 +250,22 @@ export default function Landing({
                                 </Link>
                             </div>
 
+                            {/* Trust micro-proof */}
+                            <div className="mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+                                <span className="inline-flex items-center gap-2">
+                                    <ShieldCheck className="size-3.5 text-primary" />
+                                    Reglas anti-inventos
+                                </span>
+                                <span className="inline-flex items-center gap-2">
+                                    <Zap className="size-3.5 text-primary" />
+                                    Setup rápido
+                                </span>
+                                <span className="inline-flex items-center gap-2">
+                                    <MessageCircle className="size-3.5 text-primary" />
+                                    WhatsApp-first
+                                </span>
+                            </div>
+
                             {/* 2) Social proof */}
                             <div className="mt-10 grid grid-cols-2 gap-3 text-left sm:grid-cols-4">
                                 {[
@@ -499,7 +515,7 @@ export default function Landing({
                             {[
                                 {
                                     title: 'Starter',
-                                    price: '—',
+                                    price: 'Demo',
                                     items: [
                                         'Kanban + etapas',
                                         'Leads manuales',
@@ -508,7 +524,7 @@ export default function Landing({
                                 },
                                 {
                                     title: 'Pro',
-                                    price: '—',
+                                    price: 'Recomendado',
                                     items: [
                                         'IA en el CRM',
                                         'Plantillas de seguimiento',
@@ -517,7 +533,7 @@ export default function Landing({
                                 },
                                 {
                                     title: 'Ops',
-                                    price: '—',
+                                    price: 'WhatsApp-first',
                                     items: [
                                         'WhatsApp-first',
                                         'Reglas de calificación',
