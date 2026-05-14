@@ -177,6 +177,33 @@ export default function Landing({
                             </span>
                         </div>
                         <nav className="flex items-center gap-2 sm:gap-3">
+                            <div className="hidden items-center gap-1.5 md:flex">
+                                <a
+                                    href="#beneficios"
+                                    className="premium-navlink rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                >
+                                    Beneficios
+                                </a>
+                                <a
+                                    href="#como-funciona"
+                                    className="premium-navlink rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                >
+                                    Cómo funciona
+                                </a>
+                                <a
+                                    href="#oferta"
+                                    className="premium-navlink rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                >
+                                    Oferta
+                                </a>
+                                <a
+                                    href="#faq"
+                                    className="premium-navlink rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                >
+                                    FAQ
+                                </a>
+                            </div>
+
                             {isAuth ? (
                                 <>
                                     <Link
@@ -347,7 +374,10 @@ export default function Landing({
                     </section>
 
                     {/* 4) Benefits */}
-                    <section className="mx-auto max-w-6xl px-4 pb-6 sm:px-6">
+                    <section
+                        id="beneficios"
+                        className="mx-auto max-w-6xl scroll-mt-24 px-4 pb-6 sm:px-6"
+                    >
                         <SectionTitle
                             kicker="Beneficios"
                             title="Diseñado para conversión y operación"
@@ -380,7 +410,10 @@ export default function Landing({
                     </section>
 
                     {/* 5) How it works */}
-                    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+                    <section
+                        id="como-funciona"
+                        className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6"
+                    >
                         <SectionTitle
                             kicker="Cómo funciona"
                             title="Tres pasos, cero drama"
@@ -524,7 +557,10 @@ export default function Landing({
                     </section>
 
                     {/* 7) Pricing / Offer */}
-                    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+                    <section
+                        id="oferta"
+                        className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6"
+                    >
                         <SectionTitle
                             kicker="Oferta"
                             title="Un sistema, no una plantilla"
@@ -628,7 +664,10 @@ export default function Landing({
                     </section>
 
                     {/* 8) FAQ */}
-                    <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+                    <section
+                        id="faq"
+                        className="mx-auto max-w-6xl scroll-mt-24 px-4 pb-10 sm:px-6"
+                    >
                         <SectionTitle
                             kicker="FAQ"
                             title="Respuestas rápidas"
