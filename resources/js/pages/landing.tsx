@@ -181,7 +181,7 @@ export default function Landing({
                                 <>
                                     <Link
                                         href={dashboard()}
-                                        className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                        className="premium-navlink rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                                     >
                                         Panel
                                     </Link>
@@ -197,7 +197,7 @@ export default function Landing({
                                 <>
                                     <Link
                                         href={login()}
-                                        className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                        className="premium-navlink rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                                     >
                                         Iniciar sesión
                                     </Link>
@@ -269,20 +269,39 @@ export default function Landing({
                             {/* 2) Social proof */}
                             <div className="mt-10 grid grid-cols-2 gap-3 text-left sm:grid-cols-4">
                                 {[
-                                    'Seguimiento',
-                                    'Kanban',
-                                    'Catálogo',
-                                    'Handoff humano',
-                                ].map((label) => (
+                                    {
+                                        label: 'Seguimiento',
+                                        value: '1 vista',
+                                        note: 'Sin chats perdidos',
+                                    },
+                                    {
+                                        label: 'Kanban',
+                                        value: 'Etapas',
+                                        note: 'Prioridad + contexto',
+                                    },
+                                    {
+                                        label: 'Catálogo',
+                                        value: 'Con datos',
+                                        note: 'Menos inventos',
+                                    },
+                                    {
+                                        label: 'Handoff humano',
+                                        value: 'Listo',
+                                        note: 'Cuando toca cerrar',
+                                    },
+                                ].map((it) => (
                                     <div
-                                        key={label}
+                                        key={it.label}
                                         className="rounded-2xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground shadow-sm backdrop-blur transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md motion-reduce:hover:translate-y-0"
                                     >
                                         <span className="block text-xs font-semibold tracking-wide text-foreground">
-                                            {label}
+                                            {it.label}
                                         </span>
-                                        <span className="mt-1 block text-xs">
-                                            Hecho para cerrar
+                                        <span className="mt-1 block text-sm font-semibold text-foreground">
+                                            {it.value}
+                                        </span>
+                                        <span className="mt-0.5 block text-xs">
+                                            {it.note}
                                         </span>
                                     </div>
                                 ))}
@@ -508,9 +527,36 @@ export default function Landing({
                     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
                         <SectionTitle
                             kicker="Oferta"
-                            title="Planes claros (sin sorpresas)"
-                            subtitle="Puedes empezar simple y escalar cuando el embudo ya esté funcionando."
+                            title="Un sistema, no una plantilla"
+                            subtitle="CTA, pipeline y contexto trabajan juntos. Empieza simple y escala cuando el embudo ya esté funcionando."
                         />
+
+                        <div className="mx-auto mt-8 grid max-w-5xl gap-3 rounded-3xl border border-border/60 bg-card/55 p-4 text-left text-sm text-muted-foreground shadow-sm backdrop-blur sm:grid-cols-3 sm:p-5">
+                            <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+                                <p className="text-xs font-semibold text-foreground">
+                                    Time-to-value
+                                </p>
+                                <p className="mt-1 text-xs">
+                                    Enfocado a “primer cierre” (no a configurar por semanas).
+                                </p>
+                            </div>
+                            <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+                                <p className="text-xs font-semibold text-foreground">
+                                    Datos primero
+                                </p>
+                                <p className="mt-1 text-xs">
+                                    Catálogo + reglas: respuestas útiles y consistentes.
+                                </p>
+                            </div>
+                            <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
+                                <p className="text-xs font-semibold text-foreground">
+                                    Control humano
+                                </p>
+                                <p className="mt-1 text-xs">
+                                    Handoff claro cuando hay dinero, riesgo o excepciones.
+                                </p>
+                            </div>
+                        </div>
                         <div className="mt-10 grid gap-4 lg:grid-cols-3">
                             {[
                                 {
