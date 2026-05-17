@@ -151,6 +151,8 @@ export default function Landing({
           ? 'Comenzar'
           : 'Entrar';
 
+    const demoHref = isAuth ? kanban() : '#producto';
+
     return (
         <>
             <Head title={appName} />
@@ -269,12 +271,12 @@ export default function Landing({
                                     {primaryCtaLabel}
                                     <ArrowRight className="size-4" />
                                 </Link>
-                                <Link
-                                    href={isAuth ? kanban() : login()}
+                                <a
+                                    href={demoHref}
                                     className="premium-outline inline-flex h-11 items-center justify-center rounded-xl px-6 text-sm font-semibold text-foreground"
                                 >
                                     Ver demo
-                                </Link>
+                                </a>
                             </div>
 
                             {/* Trust micro-proof */}
@@ -336,7 +338,10 @@ export default function Landing({
                         </div>
 
                         {/* 3) Visuals / product in action */}
-                        <div className="mx-auto mt-12 max-w-5xl animate-in duration-700 fill-mode-both [animation-delay:200ms] fade-in slide-in-from-bottom-2">
+                        <div
+                            id="producto"
+                            className="mx-auto mt-12 max-w-5xl scroll-mt-24 animate-in duration-700 fill-mode-both [animation-delay:200ms] fade-in slide-in-from-bottom-2"
+                        >
                             <div className="grid gap-4 md:grid-cols-12">
                                 <div className="md:col-span-7">
                                     <div className="glass-panel relative overflow-hidden rounded-3xl">
@@ -369,6 +374,21 @@ export default function Landing({
                                         />
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="mx-auto mt-5 flex max-w-5xl flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
+                                {[
+                                    'Human-in-the-loop (handoff) cuando toca',
+                                    'Reglas + catálogo = respuestas consistentes',
+                                    'Pipeline auditable (cada lead con contexto)',
+                                ].map((t) => (
+                                    <span
+                                        key={t}
+                                        className="premium-outline rounded-full px-3 py-1"
+                                    >
+                                        {t}
+                                    </span>
+                                ))}
                             </div>
                         </div>
                     </section>

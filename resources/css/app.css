@@ -530,9 +530,40 @@
     pointer-events: none;
 }
 
+/* Subtle shimmer edge on hover (keeps DnD-safe: no transform animations). */
+.premium-lead-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+        90deg,
+        rgba(107, 31, 42, 0.00),
+        rgba(107, 31, 42, 0.18),
+        rgba(251, 248, 240, 0.30),
+        rgba(155, 58, 68, 0.18),
+        rgba(107, 31, 42, 0.00)
+    );
+    background-size: 220% 100%;
+    opacity: 0;
+    pointer-events: none;
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    transition: opacity 200ms ease;
+}
+
 @media (hover: hover) {
     .premium-lead-card:hover::before {
         opacity: 1;
+    }
+
+    .premium-lead-card:hover::after {
+        opacity: 1;
+        animation: shimmer-border 9s linear infinite;
     }
 }
 
@@ -587,6 +618,7 @@
     .glass-panel,
     .premium-outline,
     .premium-lead-card::before,
+    .premium-lead-card::after,
     .premium-navlink::after {
         transition: none !important;
         transform: none !important;
