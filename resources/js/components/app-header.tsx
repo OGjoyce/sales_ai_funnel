@@ -131,7 +131,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                 <Link
                                                     key={item.title}
                                                     href={item.href}
-                                                    className="flex items-center space-x-2 font-medium"
+                                                    className="premium-navlink flex items-center space-x-2 rounded-lg px-3 py-2 font-medium text-foreground/90 transition-colors hover:bg-muted/25 hover:text-foreground"
                                                 >
                                                     {item.icon && (
                                                         <item.icon className="h-5 w-5" />
@@ -188,7 +188,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                     item.href,
                                                     activeItemStyles,
                                                 ),
-                                                'h-9 cursor-pointer px-3',
+                                                'premium-navlink h-9 cursor-pointer px-3',
                                             )}
                                         >
                                             {item.icon && (

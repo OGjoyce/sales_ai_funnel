@@ -9,7 +9,7 @@ import {
     Sparkles,
     Zap,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, toUrl } from '@/lib/utils';
 import { dashboard, login, register } from '@/routes';
 import { kanban } from '@/routes/crm';
 
@@ -151,7 +151,7 @@ export default function Landing({
           ? 'Comenzar'
           : 'Entrar';
 
-    const demoHref = isAuth ? kanban() : '#producto';
+    const demoHref = isAuth ? toUrl(kanban()) : '#producto';
 
     return (
         <>
@@ -349,6 +349,8 @@ export default function Landing({
                                         <img
                                             src="/landing/Screenshot_20260512_102554.png"
                                             alt="Dashboard premium"
+                                            width={1003}
+                                            height={626}
                                             className="h-[22rem] w-full object-cover opacity-95"
                                             loading="lazy"
                                         />
@@ -360,6 +362,8 @@ export default function Landing({
                                         <img
                                             src="/landing/Screenshot_20260512_102707.png"
                                             alt="Insights"
+                                            width={1003}
+                                            height={626}
                                             className="h-44 w-full object-cover"
                                             loading="lazy"
                                         />
@@ -369,6 +373,8 @@ export default function Landing({
                                         <img
                                             src="/landing/Screenshot_20260512_102707.png"
                                             alt="Automation"
+                                            width={1003}
+                                            height={626}
                                             className="h-44 w-full object-cover"
                                             loading="lazy"
                                         />
@@ -565,7 +571,7 @@ export default function Landing({
                                 {testimonials.map((t) => (
                                     <figure
                                         key={t.name}
-                                        className="rounded-3xl border border-border/60 bg-card/60 p-6 shadow-lg backdrop-blur"
+                                        className="glass-panel rounded-3xl p-6"
                                     >
                                         <blockquote className="text-sm leading-relaxed text-foreground">
                                             {t.quote}
@@ -653,9 +659,9 @@ export default function Landing({
                                 <div
                                     key={p.title}
                                     className={cn(
-                                        'rounded-3xl border border-border/60 bg-card/60 p-6 shadow-lg backdrop-blur',
+                                        'glass-panel rounded-3xl p-6',
                                         p.title === 'Pro'
-                                            ? 'ring-1 ring-primary/25'
+                                            ? 'premium-shimmer-ring ring-1 ring-primary/25'
                                             : '',
                                     )}
                                 >
@@ -704,7 +710,7 @@ export default function Landing({
                             {faqs.map((f) => (
                                 <div
                                     key={f.q}
-                                    className="rounded-3xl border border-border/60 bg-card/60 p-6 shadow-lg backdrop-blur"
+                                    className="glass-panel rounded-3xl p-6"
                                 >
                                     <h3 className="font-semibold text-foreground">
                                         {f.q}

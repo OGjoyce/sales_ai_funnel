@@ -428,7 +428,31 @@
 
 .premium-navlink {
     position: relative;
+    isolation: isolate;
     border-radius: 0.75rem;
+}
+
+/* Soft hover wash + underline (keeps it “premium”, not flashy). */
+.premium-navlink::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+            80% 120% at 50% 0%,
+            rgba(107, 31, 42, 0.10),
+            transparent 60%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(253, 252, 249, 0.55),
+            rgba(253, 252, 249, 0.15)
+        );
+    opacity: 0;
+    transform: translateY(1px);
+    transition: opacity 180ms ease, transform 180ms ease;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .premium-navlink::after {
@@ -450,6 +474,11 @@
 }
 
 @media (hover: hover) {
+    .premium-navlink:hover::before {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     .premium-navlink:hover::after {
         opacity: 1;
         transform: translateY(0);
