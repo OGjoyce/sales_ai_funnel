@@ -152,6 +152,7 @@ export default function Landing({
           : 'Entrar';
 
     const demoHref = isAuth ? toUrl(kanban()) : '#producto';
+    const consultHref = 'https://calendly.com/ownstrpk4/free-consultation';
 
     return (
         <>
@@ -340,7 +341,7 @@ export default function Landing({
                         {/* 3) Visuals / product in action */}
                         <div
                             id="producto"
-                            className="mx-auto mt-12 max-w-5xl scroll-mt-24 animate-in duration-700 fill-mode-both [animation-delay:200ms] fade-in slide-in-from-bottom-2"
+                            className="mx-auto mt-12 max-w-5xl animate-in scroll-mt-24 duration-700 fill-mode-both [animation-delay:200ms] fade-in slide-in-from-bottom-2"
                         >
                             <div className="grid gap-4 md:grid-cols-12">
                                 <div className="md:col-span-7">
@@ -458,7 +459,7 @@ export default function Landing({
                                         animationDuration: '600ms',
                                     }}
                                 >
-                                    <div className="mb-3 inline-flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-border shadow-sm">
+                                    <div className="mb-3 inline-flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm ring-1 ring-border">
                                         <span className="text-sm font-semibold">
                                             {idx + 1}
                                         </span>
@@ -483,7 +484,7 @@ export default function Landing({
                         />
 
                         <div className="mx-auto mt-10 grid gap-4 lg:grid-cols-12">
-                            <div className="glass-panel lg:col-span-7 rounded-3xl p-6">
+                            <div className="glass-panel rounded-3xl p-6 lg:col-span-7">
                                 <h3 className="text-lg font-semibold text-foreground">
                                     Ideal para
                                 </h3>
@@ -521,19 +522,25 @@ export default function Landing({
                                 </ul>
                             </div>
 
-                            <div className="glass-panel lg:col-span-5 rounded-3xl p-6">
+                            <div className="glass-panel rounded-3xl p-6 lg:col-span-5">
                                 <h3 className="text-lg font-semibold text-foreground">
                                     Integraciones típicas
                                 </h3>
                                 <p className="mt-2 text-sm text-muted-foreground">
-                                    Conecta los canales donde ya vendes. (Disponibles según tu
-                                    proveedor y flujo.)
+                                    Conecta los canales donde ya vendes.
+                                    (Disponibles según tu proveedor y flujo.)
                                 </p>
                                 <div className="mt-5 flex flex-wrap gap-2">
                                     {[
-                                        { icon: MessageCircle, label: 'WhatsApp' },
+                                        {
+                                            icon: MessageCircle,
+                                            label: 'WhatsApp',
+                                        },
                                         { icon: Mail, label: 'Email / Gmail' },
-                                        { icon: LayoutGrid, label: 'Sheets (registro)' },
+                                        {
+                                            icon: LayoutGrid,
+                                            label: 'Sheets (registro)',
+                                        },
                                         { icon: Zap, label: 'Webhooks / API' },
                                     ].map((chip) => (
                                         <span
@@ -551,8 +558,9 @@ export default function Landing({
                                         Señal de sistema premium
                                     </p>
                                     <p className="mt-1 text-xs text-muted-foreground">
-                                        Cada lead vive en una ficha con contexto, estado y la
-                                        acción recomendada (no “mensajes sueltos”).
+                                        Cada lead vive en una ficha con
+                                        contexto, estado y la acción recomendada
+                                        (no “mensajes sueltos”).
                                     </p>
                                 </div>
                             </div>
@@ -606,7 +614,8 @@ export default function Landing({
                                     Time-to-value
                                 </p>
                                 <p className="mt-1 text-xs">
-                                    Enfocado a “primer cierre” (no a configurar por semanas).
+                                    Enfocado a “primer cierre” (no a configurar
+                                    por semanas).
                                 </p>
                             </div>
                             <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
@@ -614,7 +623,8 @@ export default function Landing({
                                     Datos primero
                                 </p>
                                 <p className="mt-1 text-xs">
-                                    Catálogo + reglas: respuestas útiles y consistentes.
+                                    Catálogo + reglas: respuestas útiles y
+                                    consistentes.
                                 </p>
                             </div>
                             <div className="rounded-2xl border border-border/60 bg-background/60 p-4">
@@ -622,7 +632,8 @@ export default function Landing({
                                     Control humano
                                 </p>
                                 <p className="mt-1 text-xs">
-                                    Handoff claro cuando hay dinero, riesgo o excepciones.
+                                    Handoff claro cuando hay dinero, riesgo o
+                                    excepciones.
                                 </p>
                             </div>
                         </div>
@@ -694,6 +705,36 @@ export default function Landing({
                                 </div>
                             ))}
                         </div>
+
+                        <div className="mx-auto mt-6 flex max-w-5xl flex-col items-center justify-between gap-4 rounded-3xl border border-border/60 bg-card/55 p-4 text-center text-sm text-muted-foreground shadow-sm backdrop-blur sm:flex-row sm:text-left">
+                            <div>
+                                <p className="text-sm font-semibold text-foreground">
+                                    ¿Quieres verlo con tu caso?
+                                </p>
+                                <p className="mt-1 text-xs">
+                                    Agenda 15 min y sal con etapas, checklist de
+                                    calificación y el “siguiente paso” definido.
+                                </p>
+                            </div>
+
+                            <div className="flex flex-wrap items-center justify-center gap-2">
+                                <a
+                                    href={consultHref}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="premium-outline inline-flex h-11 items-center justify-center rounded-xl px-6 text-sm font-semibold text-foreground"
+                                >
+                                    Agendar 15 min
+                                </a>
+                                <Link
+                                    href={primaryCtaHref}
+                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95"
+                                >
+                                    {primaryCtaLabel}
+                                    <ArrowRight className="size-4" />
+                                </Link>
+                            </div>
+                        </div>
                     </section>
 
                     {/* 8) FAQ */}
@@ -708,17 +749,18 @@ export default function Landing({
                         />
                         <div className="mt-10 grid gap-4 lg:grid-cols-2">
                             {faqs.map((f) => (
-                                <div
+                                <details
                                     key={f.q}
-                                    className="glass-panel rounded-3xl p-6"
+                                    className="glass-panel group rounded-3xl p-6 transition-[border-color,box-shadow] duration-300 [&[open]]:border-primary/25 [&[open]]:shadow-[0_22px_60px_rgba(5,5,6,0.10)]"
                                 >
-                                    <h3 className="font-semibold text-foreground">
-                                        {f.q}
-                                    </h3>
-                                    <p className="mt-2 text-sm text-muted-foreground">
+                                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-foreground focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none [&::-webkit-details-marker]:hidden">
+                                        <span>{f.q}</span>
+                                        <ArrowRight className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-90" />
+                                    </summary>
+                                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                                         {f.a}
                                     </p>
-                                </div>
+                                </details>
                             ))}
                         </div>
                     </section>
