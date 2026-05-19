@@ -1138,7 +1138,7 @@ export default function CrmKanban() {
                                                         'ring-2 ring-arc/50 ring-offset-2 ring-offset-transparent dark:shadow-[0_0_24px_rgba(155,110,245,0.25)]',
                                                 )}
                                             >
-                                                <div className="border-b border-border px-3 py-2">
+                                                <div className="rounded-t-2xl border-b border-border bg-background/45 px-3 py-2 backdrop-blur-md">
                                                     <h2 className="text-sm font-semibold text-foreground">
                                                         {stage.name}
                                                     </h2>
@@ -1195,7 +1195,7 @@ export default function CrmKanban() {
                                                                         >
                                                                             <div className="flex gap-2">
                                                                                 <div
-                                                                                    className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary/15 text-xs font-bold text-primary"
+                                                                                    className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary/15 text-xs font-bold text-primary ring-1 ring-border/70 shadow-sm"
                                                                                 >
                                                                                     {initials(
                                                                                         lead.name,

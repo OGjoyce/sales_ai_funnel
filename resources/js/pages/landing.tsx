@@ -441,11 +441,18 @@ export default function Landing({
                         />
                         <div className="mx-auto mt-10 grid gap-4 lg:grid-cols-3">
                             {steps.map((s, idx) => (
-                                <div
+                                <article
                                     key={s.title}
-                                    className="rounded-3xl border border-border/60 bg-card/60 p-6 shadow-lg backdrop-blur"
+                                    className={cn(
+                                        'glass-panel group relative overflow-hidden rounded-3xl p-6 transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_24px_70px_rgba(5,5,6,0.10)] motion-reduce:hover:translate-y-0',
+                                        'animate-in fill-mode-both fade-in slide-in-from-bottom-2',
+                                    )}
+                                    style={{
+                                        animationDelay: `${120 + idx * 90}ms`,
+                                        animationDuration: '600ms',
+                                    }}
                                 >
-                                    <div className="mb-3 inline-flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-border">
+                                    <div className="mb-3 inline-flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-border shadow-sm">
                                         <span className="text-sm font-semibold">
                                             {idx + 1}
                                         </span>
@@ -453,10 +460,10 @@ export default function Landing({
                                     <h3 className="text-lg font-semibold text-foreground">
                                         {s.title}
                                     </h3>
-                                    <p className="mt-2 text-sm text-muted-foreground">
+                                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                                         {s.description}
                                     </p>
-                                </div>
+                                </article>
                             ))}
                         </div>
                     </section>
