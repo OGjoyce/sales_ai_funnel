@@ -452,9 +452,10 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(
+    background:
+        radial-gradient(
             80% 120% at 50% 0%,
-            rgba(107, 31, 42, 0.10),
+            rgba(107, 31, 42, 0.1),
             transparent 60%
         ),
         linear-gradient(
@@ -464,7 +465,9 @@
         );
     opacity: 0;
     transform: translateY(1px);
-    transition: opacity 180ms ease, transform 180ms ease;
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease;
     pointer-events: none;
     z-index: -1;
 }
@@ -484,7 +487,9 @@
     );
     opacity: 0;
     transform: translateY(2px);
-    transition: opacity 180ms ease, transform 180ms ease;
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease;
 }
 
 @media (hover: hover) {
@@ -553,6 +558,44 @@
     position: relative;
 }
 
+/* Media frames (landing screenshots): subtle premium border + hover shimmer */
+.premium-media-frame {
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-media-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(107, 31, 42, 0),
+        rgba(107, 31, 42, 0.14),
+        rgba(251, 248, 240, 0.28),
+        rgba(155, 58, 68, 0.14),
+        rgba(107, 31, 42, 0)
+    );
+    background-size: 220% 100%;
+    transition: opacity 200ms ease;
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: 1px;
+}
+
+@media (hover: hover) {
+    .premium-media-frame:hover::after {
+        opacity: 1;
+        animation: shimmer-border 10s linear infinite;
+    }
+}
+
 /* CRM lead card: premium hover without animating transforms (safe with dnd) */
 .premium-lead-card {
     position: relative;
@@ -582,11 +625,11 @@
     padding: 1px;
     background: linear-gradient(
         90deg,
-        rgba(107, 31, 42, 0.00),
+        rgba(107, 31, 42, 0),
         rgba(107, 31, 42, 0.18),
-        rgba(251, 248, 240, 0.30),
+        rgba(251, 248, 240, 0.3),
         rgba(155, 58, 68, 0.18),
-        rgba(107, 31, 42, 0.00)
+        rgba(107, 31, 42, 0)
     );
     background-size: 220% 100%;
     opacity: 0;
@@ -654,7 +697,8 @@
     .animate-in,
     .animate-fade-rise,
     .cosmic-border-shimmer,
-    .premium-shimmer-ring::before {
+    .premium-shimmer-ring::before,
+    .premium-media-frame::after {
         animation: none !important;
     }
 
@@ -662,6 +706,7 @@
     .premium-outline,
     .premium-lead-card::before,
     .premium-lead-card::after,
+    .premium-media-frame::after,
     .premium-navlink::after {
         transition: none !important;
         transform: none !important;

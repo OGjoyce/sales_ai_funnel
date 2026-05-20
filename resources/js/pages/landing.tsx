@@ -169,7 +169,7 @@ export default function Landing({
                 </div>
 
                 {/* Header */}
-                <header className="relative z-10 border-b border-border/60 bg-background/70 backdrop-blur-md">
+                <header className="sticky top-0 z-20 border-b border-border/60 bg-background/70 shadow-[0_1px_0_rgba(36,24,24,0.06)] backdrop-blur-md">
                     <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
                         <div className="flex items-center gap-2">
                             <span className="flex size-9 items-center justify-center rounded-lg bg-primary/12 text-primary ring-1 ring-border">
@@ -217,7 +217,7 @@ export default function Landing({
                                     </Link>
                                     <Link
                                         href={kanban()}
-                                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
+                                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                                     >
                                         Ir al CRM
                                         <ArrowRight className="size-4" />
@@ -233,7 +233,7 @@ export default function Landing({
                                     </Link>
                                     <Link
                                         href={primaryCtaHref}
-                                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
+                                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                                     >
                                         {primaryCtaLabel}
                                         <ArrowRight className="size-4" />
@@ -267,7 +267,7 @@ export default function Landing({
                             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
                                 <Link
                                     href={primaryCtaHref}
-                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
+                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                                 >
                                     {primaryCtaLabel}
                                     <ArrowRight className="size-4" />
@@ -345,7 +345,7 @@ export default function Landing({
                         >
                             <div className="grid gap-4 md:grid-cols-12">
                                 <div className="md:col-span-7">
-                                    <div className="glass-panel relative overflow-hidden rounded-3xl">
+                                    <div className="glass-panel premium-media-frame relative rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
                                         <img
                                             src="/landing/Screenshot_20260512_102554.png"
@@ -354,11 +354,12 @@ export default function Landing({
                                             height={626}
                                             className="h-[22rem] w-full object-cover opacity-95"
                                             loading="lazy"
+                                            decoding="async"
                                         />
                                     </div>
                                 </div>
                                 <div className="grid gap-4 md:col-span-5">
-                                    <div className="glass-panel relative overflow-hidden rounded-3xl">
+                                    <div className="glass-panel premium-media-frame relative rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
                                         <img
                                             src="/landing/Screenshot_20260512_102707.png"
@@ -367,9 +368,10 @@ export default function Landing({
                                             height={626}
                                             className="h-44 w-full object-cover"
                                             loading="lazy"
+                                            decoding="async"
                                         />
                                     </div>
-                                    <div className="glass-panel relative overflow-hidden rounded-3xl">
+                                    <div className="glass-panel premium-media-frame relative rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
                                         <img
                                             src="/landing/Screenshot_20260512_102707.png"
@@ -378,6 +380,7 @@ export default function Landing({
                                             height={626}
                                             className="h-44 w-full object-cover"
                                             loading="lazy"
+                                            decoding="async"
                                         />
                                     </div>
                                 </div>
@@ -650,7 +653,7 @@ export default function Landing({
                                 },
                                 {
                                     title: 'Pro',
-                                    price: 'Recomendado',
+                                    price: 'Desde USD $500/mes',
                                     items: [
                                         'IA en el CRM',
                                         'Plantillas de seguimiento',
@@ -659,7 +662,7 @@ export default function Landing({
                                 },
                                 {
                                     title: 'Ops',
-                                    price: 'WhatsApp-first',
+                                    price: 'WhatsApp-first (custom)',
                                     items: [
                                         'WhatsApp-first',
                                         'Reglas de calificación',
@@ -697,7 +700,7 @@ export default function Landing({
                                     </ul>
                                     <Link
                                         href={primaryCtaHref}
-                                        className="premium-shimmer-ring mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
+                                        className="premium-shimmer-ring mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                                     >
                                         Empezar
                                         <ArrowRight className="size-4" />
@@ -705,6 +708,11 @@ export default function Landing({
                                 </div>
                             ))}
                         </div>
+
+                        <p className="mx-auto mt-4 max-w-5xl text-center text-xs text-muted-foreground sm:text-left">
+                            *Precio orientativo. Depende de integraciones y
+                            volumen.
+                        </p>
 
                         <div className="mx-auto mt-6 flex max-w-5xl flex-col items-center justify-between gap-4 rounded-3xl border border-border/60 bg-card/55 p-4 text-center text-sm text-muted-foreground shadow-sm backdrop-blur sm:flex-row sm:text-left">
                             <div>
@@ -728,7 +736,7 @@ export default function Landing({
                                 </a>
                                 <Link
                                     href={primaryCtaHref}
-                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
+                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                                 >
                                     {primaryCtaLabel}
                                     <ArrowRight className="size-4" />
@@ -778,7 +786,7 @@ export default function Landing({
                             </p>
                             <Link
                                 href={primaryCtaHref}
-                                className="premium-shimmer-ring inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
+                                className="premium-shimmer-ring inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                             >
                                 {primaryCtaLabel}
                                 <ArrowRight className="size-4" />
