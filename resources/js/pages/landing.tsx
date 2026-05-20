@@ -217,7 +217,7 @@ export default function Landing({
                                     </Link>
                                     <Link
                                         href={kanban()}
-                                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity] hover:opacity-95"
+                                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
                                     >
                                         Ir al CRM
                                         <ArrowRight className="size-4" />
@@ -233,7 +233,7 @@ export default function Landing({
                                     </Link>
                                     <Link
                                         href={primaryCtaHref}
-                                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity] hover:opacity-95"
+                                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
                                     >
                                         {primaryCtaLabel}
                                         <ArrowRight className="size-4" />
@@ -267,7 +267,7 @@ export default function Landing({
                             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
                                 <Link
                                     href={primaryCtaHref}
-                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95"
+                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
                                 >
                                     {primaryCtaLabel}
                                     <ArrowRight className="size-4" />
@@ -697,7 +697,7 @@ export default function Landing({
                                     </ul>
                                     <Link
                                         href={primaryCtaHref}
-                                        className="premium-shimmer-ring mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95"
+                                        className="premium-shimmer-ring mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
                                     >
                                         Empezar
                                         <ArrowRight className="size-4" />
@@ -728,7 +728,7 @@ export default function Landing({
                                 </a>
                                 <Link
                                     href={primaryCtaHref}
-                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95"
+                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
                                 >
                                     {primaryCtaLabel}
                                     <ArrowRight className="size-4" />
@@ -778,7 +778,7 @@ export default function Landing({
                             </p>
                             <Link
                                 href={primaryCtaHref}
-                                className="premium-shimmer-ring inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95"
+                                className="premium-shimmer-ring inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:hover:translate-y-0 motion-reduce:transition-none"
                             >
                                 {primaryCtaLabel}
                                 <ArrowRight className="size-4" />

@@ -432,6 +432,20 @@
     border-radius: 0.75rem;
 }
 
+/* Keyboard focus should feel “premium” and obvious (without dark-mode-only neon). */
+.premium-navlink:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 2px rgba(251, 248, 240, 0.92),
+        0 0 0 4px rgba(107, 31, 42, 0.32);
+}
+
+.premium-navlink:focus-visible::before,
+.premium-navlink:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* Soft hover wash + underline (keeps it “premium”, not flashy). */
 .premium-navlink::before {
     content: '';
