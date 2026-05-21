@@ -316,11 +316,15 @@
 @layer utilities {
     .glass-panel {
         @apply rounded-2xl border backdrop-blur-xl;
-        border-color: rgba(36, 24, 24, 0.1);
-        background: rgba(253, 252, 249, 0.7);
+        border-color: rgba(36, 24, 24, 0.11);
+        background: linear-gradient(
+            180deg,
+            rgba(253, 252, 249, 0.76) 0%,
+            rgba(246, 241, 230, 0.62) 100%
+        );
         box-shadow:
             0 18px 50px rgba(5, 5, 6, 0.08),
-            inset 0 1px 0 rgba(251, 248, 240, 0.85);
+            inset 0 1px 0 rgba(251, 248, 240, 0.9);
     }
 
     .dark .glass-panel {
@@ -541,7 +545,11 @@
 
 .premium-outline {
     border: 1px solid rgba(36, 24, 24, 0.14);
-    background: rgba(253, 252, 249, 0.65);
+    background: linear-gradient(
+        180deg,
+        rgba(253, 252, 249, 0.72) 0%,
+        rgba(246, 241, 230, 0.6) 100%
+    );
     box-shadow: 0 10px 30px rgba(5, 5, 6, 0.06);
     backdrop-filter: blur(10px);
 }
@@ -712,6 +720,7 @@
     .premium-lead-card::before,
     .premium-lead-card::after,
     .premium-media-frame::after,
+    .premium-navlink::before,
     .premium-navlink::after {
         transition: none !important;
         transform: none !important;

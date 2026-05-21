@@ -306,6 +306,24 @@ export default function Landing({
                                 </span>
                             </div>
 
+                            {/* Lightweight integrations */}
+                            <div className="mx-auto mt-4 flex max-w-2xl flex-wrap items-center justify-center gap-2 text-[11px] font-medium text-muted-foreground">
+                                {[
+                                    'WhatsApp',
+                                    'Gmail',
+                                    'Google Sheets',
+                                    'Shopify',
+                                    'Stripe',
+                                ].map((t) => (
+                                    <span
+                                        key={t}
+                                        className="premium-outline rounded-full px-3 py-1"
+                                    >
+                                        {t}
+                                    </span>
+                                ))}
+                            </div>
+
                             {/* 2) Social proof */}
                             <div className="mt-10 grid grid-cols-2 gap-3 text-left sm:grid-cols-4">
                                 {[
