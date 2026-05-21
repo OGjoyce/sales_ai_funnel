@@ -231,6 +231,16 @@ export default function Landing({
                                     >
                                         Iniciar sesión
                                     </Link>
+
+                                    <a
+                                        href={consultHref}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="premium-outline hidden h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold text-foreground md:inline-flex"
+                                    >
+                                        Agendar 15 min
+                                    </a>
+
                                     <Link
                                         href={primaryCtaHref}
                                         className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
@@ -763,7 +773,7 @@ export default function Landing({
                                 >
                                     <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-foreground focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none [&::-webkit-details-marker]:hidden">
                                         <span>{f.q}</span>
-                                        <ArrowRight className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-90" />
+                                        <ArrowRight className="mt-0.5 size-4 shrink-0 text-muted-foreground group-open:rotate-90 motion-safe:transition-transform motion-safe:duration-200 motion-reduce:transition-none" />
                                     </summary>
                                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                                         {f.a}

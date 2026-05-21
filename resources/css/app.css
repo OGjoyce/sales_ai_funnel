@@ -661,6 +661,11 @@
         0 18px 50px rgba(5, 5, 6, 0.1);
 }
 
+/* Keyboard users also get the subtle border shimmer (no hover required). */
+.premium-shimmer-ring:focus-visible::before {
+    opacity: 1;
+}
+
 .premium-shimmer-ring::before {
     content: '';
     position: absolute;
