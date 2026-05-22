@@ -607,10 +607,17 @@ export default function Landing({
                                 subtitle="Menos improvisación, más cierre."
                             />
                             <div className="mt-10 grid gap-4 lg:grid-cols-3">
-                                {testimonials.map((t) => (
+                                {testimonials.map((t, idx) => (
                                     <figure
                                         key={t.name}
-                                        className="glass-panel rounded-3xl p-6"
+                                        className={cn(
+                                            'glass-panel rounded-3xl p-6',
+                                            'animate-in fill-mode-both fade-in slide-in-from-bottom-1',
+                                        )}
+                                        style={{
+                                            animationDelay: `${120 + idx * 90}ms`,
+                                            animationDuration: '600ms',
+                                        }}
                                     >
                                         <blockquote className="text-sm leading-relaxed text-foreground">
                                             {t.quote}
@@ -697,15 +704,20 @@ export default function Landing({
                                         'Logging a Sheets',
                                     ],
                                 },
-                            ].map((p) => (
+                            ].map((p, idx) => (
                                 <div
                                     key={p.title}
                                     className={cn(
                                         'glass-panel rounded-3xl p-6',
+                                        'animate-in fill-mode-both fade-in slide-in-from-bottom-1',
                                         p.title === 'Pro'
                                             ? 'premium-shimmer-ring ring-1 ring-primary/25'
                                             : '',
                                     )}
+                                    style={{
+                                        animationDelay: `${120 + idx * 90}ms`,
+                                        animationDuration: '600ms',
+                                    }}
                                 >
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-lg font-semibold text-foreground">
@@ -793,7 +805,7 @@ export default function Landing({
                                         <span>{f.q}</span>
                                         <ArrowRight className="mt-0.5 size-4 shrink-0 text-muted-foreground group-open:rotate-90 motion-safe:transition-transform motion-safe:duration-200 motion-reduce:transition-none" />
                                     </summary>
-                                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1 group-open:duration-200 motion-reduce:animate-none">
                                         {f.a}
                                     </p>
                                 </details>
