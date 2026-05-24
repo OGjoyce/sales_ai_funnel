@@ -58,6 +58,8 @@ const steps = [
     },
 ] as const;
 
+const idealFor = ['D2C / catálogo', 'Servicios', 'B2B inbound', 'Agencias'] as const;
+
 const testimonials = [
     {
         quote: '“Pasamos de perder chats a cerrar con orden: cada lead tiene contexto y siguiente paso.”',
@@ -274,6 +276,21 @@ export default function Landing({
                                 catálogo y tus chats viven en un solo sistema:
                                 claro, elegante y rápido.
                             </p>
+
+                            <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-2 text-[11px] font-medium text-muted-foreground">
+                                <span className="mr-1 text-[11px] font-semibold text-foreground/80">
+                                    Ideal para:
+                                </span>
+                                {idealFor.map((t) => (
+                                    <span
+                                        key={t}
+                                        className="premium-outline rounded-full px-3 py-1"
+                                    >
+                                        {t}
+                                    </span>
+                                ))}
+                            </div>
+
                             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
                                 <Link
                                     href={primaryCtaHref}
@@ -350,7 +367,7 @@ export default function Landing({
                                 ].map((it) => (
                                     <div
                                         key={it.label}
-                                        className="rounded-2xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground shadow-sm backdrop-blur transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md motion-reduce:hover:translate-y-0"
+                                        className="premium-surface rounded-2xl border border-border/60 bg-card/60 px-4 py-3 text-sm text-muted-foreground shadow-sm backdrop-blur transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md motion-reduce:hover:translate-y-0"
                                     >
                                         <span className="block text-xs font-semibold tracking-wide text-foreground">
                                             {it.label}
@@ -375,6 +392,9 @@ export default function Landing({
                                 <div className="md:col-span-7">
                                     <div className="glass-panel premium-media-frame relative rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
+                                        <span className="premium-outline absolute left-4 top-4 rounded-full px-3 py-1 text-[11px] font-semibold text-foreground">
+                                            CRM · Kanban
+                                        </span>
                                         <img
                                             src="/landing/Screenshot_20260512_102554.png"
                                             alt="Dashboard premium"
@@ -389,6 +409,9 @@ export default function Landing({
                                 <div className="grid gap-4 md:col-span-5">
                                     <div className="glass-panel premium-media-frame relative rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
+                                        <span className="premium-outline absolute left-4 top-4 rounded-full px-3 py-1 text-[11px] font-semibold text-foreground">
+                                            Métricas
+                                        </span>
                                         <img
                                             src="/landing/Screenshot_20260512_102707.png"
                                             alt="Insights"
@@ -401,6 +424,9 @@ export default function Landing({
                                     </div>
                                     <div className="glass-panel premium-media-frame relative rounded-3xl">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/14 via-transparent to-foreground/6" />
+                                        <span className="premium-outline absolute left-4 top-4 rounded-full px-3 py-1 text-[11px] font-semibold text-foreground">
+                                            Agente / automatización
+                                        </span>
                                         <img
                                             src="/landing/Screenshot_20260512_102707.png"
                                             alt="Automation"
@@ -611,7 +637,7 @@ export default function Landing({
                                     <figure
                                         key={t.name}
                                         className={cn(
-                                            'glass-panel rounded-3xl p-6',
+                                            'glass-panel premium-surface rounded-3xl p-6',
                                             'animate-in fill-mode-both fade-in slide-in-from-bottom-1',
                                         )}
                                         style={{
@@ -708,7 +734,7 @@ export default function Landing({
                                 <div
                                     key={p.title}
                                     className={cn(
-                                        'glass-panel rounded-3xl p-6',
+                                        'glass-panel premium-surface rounded-3xl p-6',
                                         'animate-in fill-mode-both fade-in slide-in-from-bottom-1',
                                         p.title === 'Pro'
                                             ? 'premium-shimmer-ring ring-1 ring-primary/25'

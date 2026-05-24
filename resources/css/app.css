@@ -562,6 +562,45 @@
         0 16px 40px rgba(5, 5, 6, 0.08);
 }
 
+/* Subtle “premium surface” highlight (opt-in). */
+.premium-surface {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.premium-surface::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    background:
+        radial-gradient(
+            120% 80% at 25% 0%,
+            rgba(107, 31, 42, 0.12),
+            transparent 60%
+        ),
+        radial-gradient(
+            90% 70% at 100% 0%,
+            rgba(251, 248, 240, 0.85),
+            transparent 55%
+        );
+    transition: opacity 220ms ease;
+}
+
+.premium-surface > * {
+    position: relative;
+    z-index: 1;
+}
+
+@media (hover: hover) {
+    .premium-surface:hover::before {
+        opacity: 1;
+    }
+}
+
 .premium-shimmer-ring {
     position: relative;
 }
@@ -721,7 +760,8 @@
     .premium-lead-card::after,
     .premium-media-frame::after,
     .premium-navlink::before,
-    .premium-navlink::after {
+    .premium-navlink::after,
+    .premium-surface::before {
         transition: none !important;
         transform: none !important;
     }
