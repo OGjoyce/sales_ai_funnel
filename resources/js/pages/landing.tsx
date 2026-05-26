@@ -99,6 +99,14 @@ const faqs = [
         q: '¿Qué necesito para empezar?',
         a: 'Un catálogo (CSV/Sheet), tus etapas del embudo y reglas de cierre (ej. depósito/entrega).',
     },
+    {
+        q: '¿Cuánto tarda el setup?',
+        a: 'Depende de integraciones y de tu catálogo. En una llamada de 15 min dejamos etapas + checklist y definimos el primer flujo para que empieces a operar sin semanas de configuración.',
+    },
+    {
+        q: '¿Qué pasa con mis datos y el historial?',
+        a: 'Tu catálogo, leads y notas siguen siendo tuyos. El sistema está pensado para que puedas exportar y auditar el pipeline; también definimos retención y accesos según tu operación.',
+    },
 ] as const;
 
 function SectionTitle({
@@ -294,7 +302,7 @@ export default function Landing({
                             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
                                 <Link
                                     href={primaryCtaHref}
-                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                                    className="premium-shimmer-ring premium-cta inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                                 >
                                     {primaryCtaLabel}
                                     <ArrowRight className="size-4" />
@@ -305,6 +313,16 @@ export default function Landing({
                                 >
                                     Ver demo
                                 </a>
+                                {!isAuth ? (
+                                    <a
+                                        href={consultHref}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="premium-outline inline-flex h-11 items-center justify-center rounded-xl px-6 text-sm font-semibold text-foreground"
+                                    >
+                                        Agendar 15 min
+                                    </a>
+                                ) : null}
                             </div>
 
                             {/* Trust micro-proof */}
@@ -766,7 +784,7 @@ export default function Landing({
                                     </ul>
                                     <Link
                                         href={primaryCtaHref}
-                                        className="premium-shimmer-ring mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                                        className="premium-shimmer-ring premium-cta mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                                     >
                                         Empezar
                                         <ArrowRight className="size-4" />
@@ -802,7 +820,7 @@ export default function Landing({
                                 </a>
                                 <Link
                                     href={primaryCtaHref}
-                                    className="premium-shimmer-ring inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                                    className="premium-shimmer-ring premium-cta inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                                 >
                                     {primaryCtaLabel}
                                     <ArrowRight className="size-4" />
@@ -852,7 +870,7 @@ export default function Landing({
                             </p>
                             <Link
                                 href={primaryCtaHref}
-                                className="premium-shimmer-ring inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                                className="premium-shimmer-ring premium-cta inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg transition-[box-shadow,opacity,transform] hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                             >
                                 {primaryCtaLabel}
                                 <ArrowRight className="size-4" />

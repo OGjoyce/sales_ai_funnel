@@ -605,6 +605,39 @@
     position: relative;
 }
 
+/* Primary CTA polish (pairs well with .premium-shimmer-ring). */
+.premium-cta {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.premium-cta::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background:
+        radial-gradient(
+            120% 70% at 35% 0%,
+            rgba(251, 248, 240, 0.38),
+            transparent 60%
+        ),
+        radial-gradient(
+            120% 70% at 100% 30%,
+            rgba(107, 31, 42, 0.16),
+            transparent 55%
+        );
+    transition: opacity 220ms ease;
+}
+
+@media (hover: hover) {
+    .premium-cta:hover::after {
+        opacity: 1;
+    }
+}
+
 /* Media frames (landing screenshots): subtle premium border + hover shimmer */
 .premium-media-frame {
     position: relative;
@@ -750,6 +783,7 @@
     .animate-fade-rise,
     .cosmic-border-shimmer,
     .premium-shimmer-ring::before,
+    .premium-cta::after,
     .premium-media-frame::after {
         animation: none !important;
     }
@@ -758,6 +792,7 @@
     .premium-outline,
     .premium-lead-card::before,
     .premium-lead-card::after,
+    .premium-cta::after,
     .premium-media-frame::after,
     .premium-navlink::before,
     .premium-navlink::after,
