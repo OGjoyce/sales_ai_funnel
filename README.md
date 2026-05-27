@@ -2,7 +2,54 @@
 
 CRM premium con embudo tipo Kanban, catálogo de productos, base de conocimiento (RAG) por usuario, y agente IA con tools para ventas (incluye integración opcional con OpenClaw para scraping/WhatsApp/email).
 
-## Requisitos
+---
+
+## 🚀 Quick Start (Docker - Recommended)
+
+**For Windows/Mac/Linux users** with Docker Desktop installed:
+
+```bash
+# 1. Clone and configure
+git clone https://github.com/OGjoyce/sales_ai_funnel.git
+cd sales_ai_funnel
+copy .env.example .env        # Windows: use 'copy'
+cp .env.example .env          # Mac/Linux: use 'cp'
+
+# 2. Edit .env with your API keys
+# - OPENAI_API_KEY (from openai.com)
+# - OPENCLAW_GATEWAY_TOKEN
+# - MCP_SERVICE_TOKEN
+
+# 3. Start services
+docker compose -f docker-compose.local.yml up -d
+
+# 4. Initialize database
+docker compose -f docker-compose.local.yml exec app php artisan migrate
+
+# 5. Open browser
+# http://localhost
+```
+
+**Platform-specific guides:**
+- **Windows:** See [WINDOWS_SETUP.md](./WINDOWS_SETUP.md)
+- **All platforms:** See [DOCKER_LOCAL_README.md](./DOCKER_LOCAL_README.md)
+
+**Port Reference:**
+| Service | URL | Purpose |
+|---------|-----|---------|
+| Web UI | http://localhost | React frontend + API |
+| OpenClaw | http://localhost:18789 | Agent gateway |
+| MCP Server | http://localhost:8001 | Claude integration |
+
+👉 See [PORT_REFERENCE.md](./PORT_REFERENCE.md) for complete port documentation.
+
+---
+
+## Local Development (Without Docker)
+
+If you prefer to run locally without Docker:
+
+### Requisitos
 
 - PHP 8.3+, Composer, Node.js 20+, npm
 - SQLite (por defecto) o MySQL/Postgres si cambias `.env`

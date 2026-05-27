@@ -11,9 +11,17 @@
 /resources/js/wayfinder
 /vendor
 .DS_Store
+
+# Environment files
+# Exclude: .env (local secrets), .env.backup (backup)
+# Include: .env.example (template), .env.docker (Docker secrets-safe)
 .env
 .env.backup
 .env.production
+
+# Ensure .env.example and .env.docker are tracked (secrets safe in .env.docker)
+!.env.example
+!.env.docker
 .phpactor.json
 .phpunit.result.cache
 Homestead.json

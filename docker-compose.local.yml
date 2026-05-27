@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: ramsrib/pgvector:latest
+    container_name: velora_postgres_local
+    restart: always
+    environment:
+      POSTGRES_DB: sales_ai_funnel
+      POSTGRES_USER: sales
+      POSTGRES_PASSWORD: sales
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_local:/var/lib/postgresql/data
+    networks:
+      - velora_local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sales"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: velora_redis_local
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_local:/data
+    networks:
+      - velora_local
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  openclaw:
+    build:
+      context: .
+      dockerfile: Dockerfile.openclaw
+    container_name: velora_openclaw_local
+    restart: always
+    environment:
+      NODE_ENV: production
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      HOME: /home/node
+    volumes:
+      - ${HOME}/.openclaw:/home/node/.openclaw:rw
+    ports:
+      - "127.0.0.1:18789:18789"
+    networks:
+      - velora_local
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:18789/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: velora_app_local
+    restart: always
+    env_file: .env.docker
+    volumes:
+      - ./storage:/app/storage
+      - ./bootstrap/cache:/app/bootstrap/cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      openclaw:
+        condition: service_healthy
+    networks:
+      - velora_local
+
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: velora_mcp_local
+    restart: always
+    env_file: .env.docker
+    environment:
+      LARAVEL_API_URL: http://app:8000/api
+    depends_on:
+      - app
+    ports:
+      - "127.0.0.1:8001:8001"
+    networks:
+      - velora_local
+
+  nginx:
+    image: nginx:alpine
+    container_name: velora_nginx_local
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/conf.d/local.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./public:/app/public:ro
+    depends_on:
+      - app
+    networks:
+      - velora_local
+
+volumes:
+  postgres_local:
+  redis_local:
+
+networks:
+  velora_local:
+    driver: bridge
