@@ -50,9 +50,14 @@ RUN mkdir -p storage/logs storage/app storage/framework/{cache,sessions,views} b
 #     && php artisan route:cache \
 #     && php artisan view:cache
 
-# Copy supervisord config
+# Copy supervisord config and entrypoint
 COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Install additional runtime dependencies (psql for health checks, redis-cli)
+RUN apk add --no-cache postgresql-client redis
 
 EXPOSE 8000
 
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

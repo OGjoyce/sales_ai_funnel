@@ -9,6 +9,10 @@ RUN npm install -g openclaw@latest
 # Create directories for workspaces and config
 RUN mkdir -p /home/node/.openclaw
 
+# Copy entrypoint script
+COPY docker/openclaw-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Expose gateway port
 EXPOSE 18789
 
@@ -17,4 +21,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:18789/ || exit 1
 
 # Start OpenClaw gateway (run in foreground for Docker)
-CMD ["openclaw", "gateway"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
