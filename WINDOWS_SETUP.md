@@ -30,14 +30,25 @@ This guide walks you through setting up the Velora application on Windows using 
    cd sales_ai_funnel
    ```
 
-4. **Configure Environment**
+4. **Configure OpenClaw** (if using agents)
+   ```bash
+   # Option A: Copy existing OpenClaw config
+   xcopy %USERPROFILE%\.openclaw openclaw\.openclaw /E /I /Y
+   
+   # Option B: Create new OpenClaw setup
+   # - Edit openclaw\.openclaw\openclaw.json
+   # - Add your gateway token
+   # See openclaw/README.md for details
+   ```
+
+5. **Configure Environment**
    ```bash
    # Copy template to .env
    copy .env.example .env
    
    # Edit .env with your credentials
    # - OPENAI_API_KEY: Get from https://platform.openai.com/api-keys
-   # - OPENCLAW_GATEWAY_TOKEN: Your OpenClaw credentials
+   # - OPENCLAW_GATEWAY_TOKEN: Your OpenClaw token
    # - MCP_SERVICE_TOKEN: Your MCP service token
    notepad .env
    ```
@@ -46,9 +57,15 @@ This guide walks you through setting up the Velora application on Windows using 
    ```env
    APP_ENV=local
    DB_HOST=postgres
+   DB_PASSWORD=sales
    QUEUE_CONNECTION=redis
    CACHE_STORE=redis
    OPENCLAW_GATEWAY_URL=http://openclaw:18789
+   OPENCLAW_GATEWAY_TOKEN=your_token_here
+   OPENCLAW_LINA_AGENT_ID=lina
+   OPENCLAW_ALLERIA_AGENT_ID=main
+   OPENAI_API_KEY=sk-proj-YOUR_KEY_HERE
+   MCP_SERVICE_TOKEN=your_token_here
    ```
 
 ---

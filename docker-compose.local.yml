@@ -47,7 +47,7 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       HOME: /home/node
     volumes:
-      - ${HOME}/.openclaw:/home/node/.openclaw:rw
+      - ./openclaw/.openclaw:/home/node/.openclaw:rw
     ports:
       - "127.0.0.1:18789:18789"
     networks:

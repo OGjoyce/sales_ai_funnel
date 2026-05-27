@@ -1,0 +1,26 @@
+# OpenClaw configuration - sensitive data
+# Keep folder structure and examples, but ignore actual configs
+
+# Ignore actual configuration (but keep examples)
+.openclaw/openclaw.json
+!.openclaw/openclaw.json.example
+
+# Ignore workspace data
+.openclaw/workspace*
+.openclaw/skills
+.openclaw/memory
+
+# Node modules and dependencies
+.openclaw/node_modules/
+.openclaw/.npm/
+.openclaw/package-lock.json
+
+# Cache and logs
+.openclaw/.cache/
+.openclaw/logs/
+*.log
+
+# Temporary files
+.openclaw/tmp/
+.openclaw/temp/
+.DS_Store

@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "gateway": {
+    "port": 18789,
+    "bind": "0.0.0.0",
+    "auth": {
+      "token": "your_openclaw_gateway_token_here"
+    }
+  },
+  "agents": [
+    {
+      "id": "main",
+      "name": "Main Agent",
+      "workspace": "./workspace",
+      "enabled": true,
+      "config": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "lina",
+      "name": "Lina Agent",
+      "workspace": "./workspace-lina",
+      "enabled": true,
+      "config": {
+        "type": "agent"
+      }
+    }
+  ],
+  "skills": {
+    "enabled": true,
+    "path": "./skills"
+  },
+  "memory": {
+    "enabled": true,
+    "path": "./memory"
+  }
+}
