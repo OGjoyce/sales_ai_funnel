@@ -164,7 +164,8 @@ services:
       - ./docker/conf.d:/etc/nginx/conf.d:ro
       - ./public:/app/public:ro
       - ./docker/ssl:/etc/nginx/ssl:ro
-      - certbot_data:/etc/letsencrypt:ro
+      # Use host certs (LetsEncrypt on VPS); certbot_data volume is for renewal container
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       - certbot_www:/var/www/certbot:ro
     networks:
       - velora_network
@@ -174,7 +175,7 @@ services:
     container_name: velora_certbot
     restart: unless-stopped
     volumes:
-      - certbot_data:/etc/letsencrypt
+      - /etc/letsencrypt:/etc/letsencrypt
       - certbot_www:/var/www/certbot
     entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $$!; done"
     networks:
