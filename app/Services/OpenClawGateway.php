@@ -122,6 +122,19 @@ TXT;
                 ]);
             }
 
+            $chatError = $this->formatLinaChatFailure($response, $isJson ? $data : null);
+            if ($chatError !== null) {
+                return ['success' => false, 'error' => $chatError];
+            }
+
+            // Fallback solo si chatCompletions no existe (404)
+            if ($response->status() !== 404) {
+                return [
+                    'success' => false,
+                    'error' => 'OpenClaw /v1/chat/completions no devolvió leads válidos. Revisa logs del gateway (openclaw) y OPENAI_API_KEY en .env.',
+                ];
+            }
+
             // Fallback: gateways que expongan /agents/run
             $legacyPayload = [
                 'agent_id' => $agentId,
@@ -434,6 +447,46 @@ TXT;
         $content = $message['content'] ?? '';
 
         return is_string($content) ? trim($content) : '';
+    }
+
+    /**
+     * Mensaje claro cuando chatCompletions falla (p. ej. OPENAI_API_KEY inválida en el gateway).
+     *
+     * @param  array<string, mixed>|null  $data
+     */
+    private function formatLinaChatFailure(\Illuminate\Http\Client\Response $response, ?array $data): ?string
+    {
+        $status = $response->status();
+        $body = $response->body();
+
+        if ($status === 401) {
+            return 'OpenClaw rechazó el token (OPENCLAW_GATEWAY_TOKEN). Verifica que coincida con gateway.auth.token en openclaw.json.';
+        }
+
+        $snippet = '';
+        if (is_array($data)) {
+            $snippet = (string) ($data['error']['message'] ?? $data['message'] ?? json_encode($data));
+        } elseif ($body !== '') {
+            $snippet = strlen($body) > 400 ? substr($body, 0, 400).'…' : $body;
+        }
+
+        if (str_contains($snippet, 'invalid_api_key') || str_contains($snippet, 'Incorrect API key')) {
+            return 'OpenClaw no pudo llamar a OpenAI: OPENAI_API_KEY inválida o placeholder en /var/www/velora/.env. Actualiza la clave y reinicia openclaw + app.';
+        }
+
+        if ($status >= 400 && $status !== 404 && $snippet !== '') {
+            return "OpenClaw /v1/chat/completions falló (HTTP {$status}): {$snippet}";
+        }
+
+        if ($status === 404) {
+            return null;
+        }
+
+        if ($status >= 400) {
+            return "OpenClaw /v1/chat/completions falló (HTTP {$status}).";
+        }
+
+        return null;
     }
 
     /**
