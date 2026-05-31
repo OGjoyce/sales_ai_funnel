@@ -16,6 +16,16 @@ openclaw/
 └── memory/                    # Persistent memory storage
 ```
 
+## Docker bootstrap (prod + local)
+
+Every `openclaw` container start runs `docker/openclaw-entrypoint.sh`:
+
+1. Creates `openclaw.json` from example if missing
+2. `docker/openclaw-bootstrap.js` — `chatCompletions` on, agent **`lina`** in config, token from `OPENCLAW_GATEWAY_TOKEN`
+3. `openclaw agents add lina` if the CLI does not list it yet
+
+Set `OPENCLAW_LINA_AGENT_ID=lina` in Laravel `.env`. VPS checklist: [PROD_DEPLOY.md](../PROD_DEPLOY.md).
+
 ## Quick Setup
 
 ### Option 1: Using Existing OpenClaw Setup (Recommended)
@@ -81,6 +91,18 @@ Key sections:
 - `gateway.auth.token` - Authentication token (from OpenClaw)
 - `agents[].id` - Agent identifier (e.g., "main", "lina")
 - `agents[].workspace` - Path to workspace directory
+
+## Docker bootstrap (prod + local)
+
+On every `openclaw` container start, `docker/openclaw-entrypoint.sh`:
+
+1. Creates `openclaw.json` from `openclaw.json.example` if missing
+2. Runs `docker/openclaw-bootstrap.js` — enables `chatCompletions`, ensures agent **`lina`**, syncs `OPENCLAW_GATEWAY_TOKEN`
+3. Runs `openclaw agents add lina` if the CLI does not list it yet
+
+Laravel must set `OPENCLAW_LINA_AGENT_ID=lina` and `OPENCLAW_GATEWAY_URL=http://openclaw:18789`.
+
+See [PROD_DEPLOY.md](../PROD_DEPLOY.md) for VPS SSH checklist.
 
 ## Docker Integration
 

@@ -68,14 +68,13 @@ services:
     env_file: .env.docker
     volumes:
       - ./storage:/app/storage
-      - ./bootstrap/cache:/app/bootstrap/cache
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
       openclaw:
-        condition: service_healthy
+        condition: service_started
     networks:
       - velora_local
 

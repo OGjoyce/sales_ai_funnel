@@ -53,7 +53,7 @@ RUN mkdir -p storage/logs storage/app storage/framework/{cache,sessions,views} b
 # Copy supervisord config and entrypoint
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
 # Install additional runtime dependencies (psql for health checks, redis-cli)
 RUN apk add --no-cache postgresql-client redis

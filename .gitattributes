@@ -1,11 +1,4 @@
-* text=auto eol=lf
-
-*.blade.php diff=html
-*.css diff=css
-*.html diff=html
-*.md diff=markdown
-*.php diff=php
-
-CHANGELOG.md export-ignore
-README.md export-ignore
-.github/workflows/browser-tests.yml export-ignore
+docker/*.sh text eol=lf
+Dockerfile* text eol=lf
+docker-compose*.yml text eol=lf
+openclaw/.openclaw/openclaw.json.example text eol=lf

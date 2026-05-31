@@ -168,6 +168,10 @@ OPENCLAW_HTTP_TIMEOUT_SECONDS=900
 
 **Key:** `OPENCLAW_GATEWAY_URL` points to the Docker service name `openclaw`, not localhost.
 
+### Automatic bootstrap (Lina + chat completions)
+
+On container start, `docker/openclaw-entrypoint.sh` runs `docker/openclaw-bootstrap.js` so production does not need manual `openclaw agents add lina`. See [PROD_DEPLOY.md](PROD_DEPLOY.md).
+
 ### OpenClaw JSON Configuration
 
 Critical settings in `openclaw.json`:

@@ -7,18 +7,21 @@ WORKDIR /app
 RUN npm install -g openclaw@latest
 
 # Create directories for workspaces and config
-RUN mkdir -p /home/node/.openclaw
+RUN mkdir -p /home/node/.openclaw /home/node/.openclaw-baked
 
-# Copy entrypoint script
+# CRM-ready example + bootstrap (used when host has no openclaw.json yet)
+COPY openclaw/.openclaw/openclaw.json.example /home/node/.openclaw-baked/openclaw.json.example
+COPY docker/openclaw-bootstrap.js /usr/local/bin/openclaw-bootstrap.js
 COPY docker/openclaw-entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh /usr/local/bin/openclaw-bootstrap.js \
+    && chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose gateway port
 EXPOSE 18789
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:18789/ || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+    CMD wget --quiet --tries=1 --spider http://127.0.0.1:18789/ || exit 1
 
 # Start OpenClaw gateway (run in foreground for Docker)
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

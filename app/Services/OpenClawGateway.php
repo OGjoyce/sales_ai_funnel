@@ -115,6 +115,13 @@ TXT;
                 Log::warning('OpenClaw Lina: /v1/chat/completions no devolvió JSON (¿endpoint desactivado en el gateway?)');
             }
 
+            if (! $response->successful()) {
+                Log::warning('OpenClaw Lina: chatCompletions failed', [
+                    'status' => $response->status(),
+                    'body' => substr($response->body(), 0, 500),
+                ]);
+            }
+
             // Fallback: gateways que expongan /agents/run
             $legacyPayload = [
                 'agent_id' => $agentId,
