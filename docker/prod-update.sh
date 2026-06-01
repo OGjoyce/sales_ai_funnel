@@ -10,13 +10,10 @@ git stash push -m "pre-deploy-$(date +%s)" -u 2>/dev/null || true
 git fetch origin master
 git reset --hard origin/master
 
-echo "==> Wayfinder types (app container)"
+echo "==> Frontend build (inside app container; copies to host for nginx)"
 $COMPOSE up -d app 2>/dev/null || true
-$COMPOSE exec -T app php artisan wayfinder:generate --with-form 2>/dev/null || php artisan wayfinder:generate --with-form 2>/dev/null || true
-
-echo "==> Frontend build (host Node)"
-npm ci
-npm run build
+$COMPOSE exec -u root -T app sh -c 'apk add --no-cache nodejs npm 2>/dev/null; cd /app && npm ci && npm run build'
+docker cp velora_app:/app/public/build/. ./public/build/
 
 echo "==> Docker build"
 $COMPOSE build app openclaw mcp-server
