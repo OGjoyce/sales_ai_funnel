@@ -30,10 +30,6 @@ chmod +x docker/sync-fernando-docs.sh
 REPO_ROOT="$(pwd)" ./docker/sync-fernando-docs.sh
 $COMPOSE exec -T app php artisan velora:sync-fernando-docs 2>/dev/null || true
 
-echo "==> Testing flags (skip verify + Invoker deploy)"
-grep -q 'VELORA_ALLOW_SKIP_EMAIL_VERIFICATION=true' .env 2>/dev/null || echo "  Tip: add VELORA_ALLOW_SKIP_EMAIL_VERIFICATION=true to .env for bypass button"
-grep -q 'VELORA_ADMIN_EMAILS=' .env 2>/dev/null || echo "  Tip: add VELORA_ADMIN_EMAILS=your@email.com for /admins/invoker"
-
 echo "==> Cache + restart"
 $COMPOSE exec -T app php artisan config:cache
 $COMPOSE exec -T app php artisan route:cache
