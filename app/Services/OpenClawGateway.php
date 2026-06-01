@@ -203,7 +203,7 @@ TXT;
             return [
                 'success' => true,
                 'mock' => true,
-                'reply' => 'Fernando no está conectado al gateway OpenClaw en este entorno. Revisa OPENCLAW_GATEWAY_URL o usa /crm/help en producción.',
+                'reply' => 'Fernando no está conectado al gateway OpenClaw en este entorno. Revisa OPENCLAW_GATEWAY_URL o abre la landing con ?chat=fernando.',
             ];
         }
 

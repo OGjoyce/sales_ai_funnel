@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\AuthorizesUserOwnedResource;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessLeadWithAgent;
 use App\Models\AgentLog;
@@ -12,6 +13,8 @@ use Illuminate\Http\Request;
 
 class AgentController extends Controller
 {
+    use AuthorizesUserOwnedResource;
+
     public function run(Request $request, AgentService $agent): JsonResponse
     {
         $data = $request->validate([
@@ -21,6 +24,7 @@ class AgentController extends Controller
         ]);
 
         $lead = Lead::query()->findOrFail($data['lead_id']);
+        $this->authorizeLead($request, $lead);
 
         if ($request->boolean('async')) {
             ProcessLeadWithAgent::dispatch($lead->id, $data['context'] ?? []);
@@ -45,6 +49,7 @@ class AgentController extends Controller
         ]);
 
         $lead = Lead::query()->findOrFail($data['lead_id']);
+        $this->authorizeLead($request, $lead);
 
         $result = $agent->runForLead($lead, [
             'operator_message' => $data['message'],
@@ -60,10 +65,18 @@ class AgentController extends Controller
     public function logs(Request $request): JsonResponse
     {
         $leadId = $request->query('lead_id');
-        $query = AgentLog::query()->orderByDesc('id')->limit(100);
+        $userId = (int) $request->user()->id;
+
+        $query = AgentLog::query()
+            ->whereHas('lead', fn ($q) => $q->where('user_id', $userId))
+            ->orderByDesc('id')
+            ->limit(100);
 
         if ($leadId !== null && $leadId !== '') {
-            $query->where('lead_id', (int) $leadId);
+            $lead = Lead::query()
+                ->where('user_id', $userId)
+                ->findOrFail((int) $leadId);
+            $query->where('lead_id', $lead->id);
         }
 
         return response()->json(['logs' => $query->get()]);

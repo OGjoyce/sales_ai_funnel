@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\ScrapeLeadsJob;
 use App\Models\AgentLog;
 use App\Models\FunnelStage;
 use App\Models\Interaction;
@@ -202,7 +203,7 @@ class AgentService
                             $args = [];
                         }
 
-                        $result = $this->executeToolPlayground($name, $args, $lead);
+                        $result = $this->executeToolPlayground($name, $args, $lead, $userId);
                         $payload = is_string($result) ? $result : json_encode($result);
 
                         $allToolCalls[] = [
@@ -498,14 +499,14 @@ TXT;
     /**
      * @param  array<string, mixed>  $args
      */
-    private function executeToolPlayground(string $name, array $args, ?Lead $lead): string
+    private function executeToolPlayground(string $name, array $args, ?Lead $lead, int $userId): string
     {
         return match ($name) {
-            'get_products' => $this->toolGetProducts($args),
-            'list_leads' => $this->toolListLeads($args),
-            'get_lead_history' => $this->toolGetLeadHistory($args),
-            'update_lead_stage' => $this->toolUpdateLeadStage($args),
-            'log_interaction' => $this->toolLogInteraction($args),
+            'get_products' => $this->toolGetProducts($args, $userId),
+            'list_leads' => $this->toolListLeads($args, $userId),
+            'get_lead_history' => $this->toolGetLeadHistory($args, $userId),
+            'update_lead_stage' => $this->toolUpdateLeadStage($args, $userId),
+            'log_interaction' => $this->toolLogInteraction($args, $userId),
             default => json_encode(['error' => 'unknown_tool', 'name' => $name]),
         };
     }
@@ -515,16 +516,18 @@ TXT;
      */
     private function executeTool(string $name, array $args, Lead $lead): string
     {
+        $userId = (int) $lead->user_id;
+
         return match ($name) {
-            'get_products' => $this->toolGetProducts($args),
-            'get_lead_history' => $this->toolGetLeadHistory($args),
-            'update_lead_stage' => $this->toolUpdateLeadStage($args),
+            'get_products' => $this->toolGetProducts($args, $userId),
+            'get_lead_history' => $this->toolGetLeadHistory($args, $userId),
+            'update_lead_stage' => $this->toolUpdateLeadStage($args, $userId),
             'send_whatsapp' => $this->toolSendWhatsapp($args),
             'send_email' => $this->toolSendEmail($args),
-            'log_interaction' => $this->toolLogInteraction($args),
-            'qualify_lead' => $this->toolQualifyLead($args),
-            'create_proposal' => $this->toolCreateProposal($args),
-            'scrape_leads' => $this->toolScrapeLeads($args),
+            'log_interaction' => $this->toolLogInteraction($args, $userId),
+            'qualify_lead' => $this->toolQualifyLead($args, $userId),
+            'create_proposal' => $this->toolCreateProposal($args, $userId),
+            'scrape_leads' => $this->toolScrapeLeads($args, $userId),
             default => json_encode(['error' => 'unknown_tool', 'name' => $name]),
         };
     }
@@ -532,12 +535,13 @@ TXT;
     /**
      * @param  array<string, mixed>  $args
      */
-    private function toolListLeads(array $args): string
+    private function toolListLeads(array $args, int $userId): string
     {
         $q = (string) ($args['query'] ?? '');
         $limit = max(1, min(25, (int) ($args['limit'] ?? 12)));
 
         $rows = Lead::query()
+            ->where('user_id', $userId)
             ->when($q !== '', function ($query) use ($q) {
                 $query->where('name', 'like', '%'.$q.'%')
                     ->orWhere('company', 'like', '%'.$q.'%')
@@ -551,13 +555,13 @@ TXT;
         return json_encode(['leads' => $rows]);
     }
 
-    private function toolGetProducts(array $args): string
+    private function toolGetProducts(array $args, int $userId): string
     {
         $q = (string) ($args['query'] ?? '');
         $max = (int) ($args['max_results'] ?? 8);
         $max = max(1, min(25, $max));
 
-        $query = Product::query()->active();
+        $query = Product::query()->where('user_id', $userId)->active();
 
         if ($q !== '') {
             $query->where(function ($query) use ($q) {
@@ -578,10 +582,19 @@ TXT;
     /**
      * @param  array<string, mixed>  $args
      */
-    private function toolGetLeadHistory(array $args): string
+    private function toolGetLeadHistory(array $args, int $userId): string
     {
         $leadId = (int) ($args['lead_id'] ?? 0);
         $limit = max(1, min(50, (int) ($args['limit'] ?? 20)));
+
+        $owned = Lead::query()
+            ->where('user_id', $userId)
+            ->where('id', $leadId)
+            ->exists();
+
+        if (! $owned) {
+            return json_encode(['error' => 'lead_not_found']);
+        }
 
         $items = Interaction::query()
             ->where('lead_id', $leadId)
@@ -595,7 +608,7 @@ TXT;
     /**
      * @param  array<string, mixed>  $args
      */
-    private function toolUpdateLeadStage(array $args): string
+    private function toolUpdateLeadStage(array $args, int $userId): string
     {
         $leadId = (int) ($args['lead_id'] ?? 0);
         $name = (string) ($args['stage_name'] ?? '');
@@ -611,7 +624,9 @@ TXT;
             return json_encode(['error' => 'stage_not_found', 'stage_name' => $name]);
         }
 
-        $l = Lead::query()->find($leadId);
+        $l = Lead::query()
+            ->where('user_id', $userId)
+            ->find($leadId);
         if ($l === null) {
             return json_encode(['error' => 'lead_not_found']);
         }
@@ -690,11 +705,15 @@ TXT;
     /**
      * @param  array<string, mixed>  $args
      */
-    private function toolLogInteraction(array $args): string
+    private function toolLogInteraction(array $args, int $userId): string
     {
         $leadId = (int) ($args['lead_id'] ?? 0);
         $content = (string) ($args['content'] ?? '');
         $type = (string) ($args['type'] ?? 'note');
+
+        if (! Lead::query()->where('user_id', $userId)->where('id', $leadId)->exists()) {
+            return json_encode(['error' => 'lead_not_found']);
+        }
 
         Interaction::create([
             'lead_id' => $leadId,
@@ -711,7 +730,7 @@ TXT;
     /**
      * @param  array<string, mixed>  $args
      */
-    private function toolQualifyLead(array $args): string
+    private function toolQualifyLead(array $args, int $userId): string
     {
         $leadId = (int) ($args['lead_id'] ?? 0);
         $score = (int) ($args['score'] ?? 0);
@@ -719,7 +738,9 @@ TXT;
 
         $score = max(0, min(100, $score));
 
-        $l = Lead::query()->find($leadId);
+        $l = Lead::query()
+            ->where('user_id', $userId)
+            ->find($leadId);
         if ($l === null) {
             return json_encode(['error' => 'lead_not_found']);
         }
@@ -736,7 +757,7 @@ TXT;
     /**
      * @param  array<string, mixed>  $args
      */
-    private function toolCreateProposal(array $args): string
+    private function toolCreateProposal(array $args, int $userId): string
     {
         $leadId = (int) ($args['lead_id'] ?? 0);
         $items = $args['items'] ?? [];
@@ -744,7 +765,9 @@ TXT;
             return json_encode(['error' => 'invalid_items']);
         }
 
-        $lead = Lead::query()->find($leadId);
+        $lead = Lead::query()
+            ->where('user_id', $userId)
+            ->find($leadId);
         if ($lead === null) {
             return json_encode(['error' => 'lead_not_found']);
         }
@@ -758,7 +781,9 @@ TXT;
             }
             $pid = (int) ($row['product_id'] ?? 0);
             $qty = max(1, (int) ($row['quantity'] ?? 1));
-            $p = Product::query()->find($pid);
+            $p = Product::query()
+                ->where('user_id', $userId)
+                ->find($pid);
             if ($p === null) {
                 continue;
             }
@@ -791,52 +816,14 @@ TXT;
     /**
      * @param  array<string, mixed>  $args
      */
-    private function toolScrapeLeads(array $args): string
+    private function toolScrapeLeads(array $args, int $userId): string
     {
         $query = (string) ($args['query'] ?? '');
         $max = (int) ($args['max_results'] ?? 10);
         $max = max(1, min(10, $max));
 
-        $result = $this->openClaw->callScrapingAgent($query, $max);
+        ScrapeLeadsJob::dispatch($query, $max, $userId);
 
-        if (! ($result['success'] ?? false)) {
-            return json_encode($result);
-        }
-
-        $firstStage = FunnelStage::query()->orderBy('sort_order')->first();
-        if ($firstStage === null) {
-            return json_encode(['error' => 'no_funnel_stages']);
-        }
-
-        $created = [];
-        foreach ($result['leads'] ?? [] as $row) {
-            if (! is_array($row)) {
-                continue;
-            }
-            $email = isset($row["email"]) && is_string($row["email"]) && $row["email"] !== "" ? $row["email"] : ("imported+".Str::lower(Str::random(10))."@placeholder.local");
-            $lead = Lead::query()->firstOrCreate(
-                ["email" => $email],
-                [
-                    "funnel_stage_id" => $firstStage->id,
-                    "name" => (string) ($row["name"] ?? "Unknown"),
-                    "phone" => $row["phone"] ?? null,
-                    "company" => $row["company"] ?? null,
-                    "website" => $row["website"] ?? null,
-                    "linkedin_url" => $row["linkedin_url"] ?? null,
-                    "source" => "scraped",
-                    "raw_data" => $row,
-                ]
-            );
-
-            if ($lead->wasRecentlyCreated) {
-                $created[] = $lead->id;
-            }
-        }
-
-        return json_encode([
-            'ok' => true,
-            'created_lead_ids' => $created,
-            'mock' => $result['mock'] ?? false,
-        ]);
+        return json_encode(['queued' => true, 'query' => $query, 'max' => $max]);
     }
 }

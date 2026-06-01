@@ -9,6 +9,7 @@ import {
     Sparkles,
     Zap,
 } from 'lucide-react';
+import { FernandoChatBubble } from '@/components/fernando-chat-bubble';
 import { cn, toUrl } from '@/lib/utils';
 import { dashboard, login, register } from '@/routes';
 import { kanban } from '@/routes/crm';
@@ -898,6 +899,7 @@ export default function Landing({
                     </footer>
                 </main>
             </div>
+            <FernandoChatBubble />
         </>
     );
 }

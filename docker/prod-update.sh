@@ -18,10 +18,11 @@ docker cp velora_app:/app/public/build/. ./public/build/
 echo "==> Docker build"
 $COMPOSE build app openclaw mcp-server
 
-echo "==> Up services"
+echo "==> Up services (recreate app so entrypoint runs migrations)"
+$COMPOSE up -d --force-recreate app
 $COMPOSE up -d
 
-echo "==> Migrate + funnel seed"
+echo "==> Migrate + funnel seed (explicit; entrypoint also migrates on app start)"
 $COMPOSE exec -T app php artisan migrate --force
 $COMPOSE exec -T app php artisan db:seed --class=Database\\Seeders\\FunnelStageSeeder --force --no-interaction 2>/dev/null || true
 

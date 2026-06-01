@@ -2,20 +2,26 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\AuthorizesUserOwnedResource;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
+    use AuthorizesUserOwnedResource;
+
     public function index(Request $request): JsonResponse
     {
         $q = $request->query('search', '');
         $limit = min(100, max(1, (int) $request->query('limit', 50)));
 
-        $query = Product::query()->orderBy('title');
+        $query = Product::query()
+            ->where('user_id', $request->user()->id)
+            ->orderBy('title');
 
         if (is_string($q) && $q !== '') {
             $query->where(function ($sub) use ($q) {
@@ -32,10 +38,17 @@ class ProductController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $userId = (int) $request->user()->id;
+
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'code' => 'required|string|max:100|unique:products,code',
+            'code' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('products', 'code')->where('user_id', $userId),
+            ],
             'price' => 'required|numeric|min:0',
             'currency' => 'nullable|string|max:8',
             'stock' => 'nullable|integer|min:0',
@@ -50,6 +63,7 @@ class ProductController extends Controller
         unset($data['image']);
         $data['currency'] = $data['currency'] ?? 'USD';
         $data['active'] = $data['active'] ?? true;
+        $data['user_id'] = $userId;
 
         $product = Product::create($data);
 
@@ -58,10 +72,21 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product): JsonResponse
     {
+        $this->authorizeProduct($request, $product);
+
+        $userId = (int) $request->user()->id;
+
         $data = $request->validate([
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'code' => 'sometimes|string|max:100|unique:products,code,'.$product->id,
+            'code' => [
+                'sometimes',
+                'string',
+                'max:100',
+                Rule::unique('products', 'code')
+                    ->where('user_id', $userId)
+                    ->ignore($product->id),
+            ],
             'price' => 'sometimes|numeric|min:0',
             'currency' => 'nullable|string|max:8',
             'stock' => 'nullable|integer|min:0',
@@ -82,8 +107,10 @@ class ProductController extends Controller
         return response()->json(['product' => $this->transform($product->fresh())]);
     }
 
-    public function destroy(Product $product): JsonResponse
+    public function destroy(Request $request, Product $product): JsonResponse
     {
+        $this->authorizeProduct($request, $product);
+
         if ($product->image_path) {
             Storage::disk('public')->delete($product->image_path);
         }

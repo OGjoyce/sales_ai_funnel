@@ -69,7 +69,7 @@ export default function Billing({
                         </Button>
                     ) : null}
                     <Button asChild variant="ghost">
-                        <Link href="/crm/help">Hablar con Fernando</Link>
+                        <Link href="/?chat=fernando">Hablar con Fernando</Link>
                     </Button>
                 </div>
             </div>

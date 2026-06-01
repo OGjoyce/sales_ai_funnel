@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Lead extends Model
 {
     protected $fillable = [
+        'user_id',
+        'lina_generation_run_id',
         'funnel_stage_id',
         'name',
         'email',
@@ -28,6 +30,16 @@ class Lead extends Model
         return [
             'raw_data' => 'array',
         ];
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function linaGenerationRun(): BelongsTo
+    {
+        return $this->belongsTo(LinaGenerationRun::class);
     }
 
     public function funnelStage(): BelongsTo

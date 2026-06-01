@@ -39,7 +39,7 @@ class RunLinaLeadGenerationJob implements ShouldQueue
         try {
             /** @var array{sector: string, product_ids?: list<int>, product_notes?: string|null, channels: array{whatsapp: bool, email: bool, website: bool, gmail: bool}} $payload */
             $payload = $run->payload;
-            $result = $lina->run($payload);
+            $result = $lina->run($payload, (int) $run->user_id, $run->id);
 
             if (! ($result['success'] ?? false)) {
                 $run->forceFill([

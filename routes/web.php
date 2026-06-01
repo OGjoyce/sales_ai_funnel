@@ -21,7 +21,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('billing', BillingPageController::class)->name('billing');
-    Route::inertia('crm/help', 'crm/help')->name('crm.help');
+    Route::redirect('crm/help', '/?chat=fernando')->name('crm.help');
 });
 
 Route::middleware(['auth', 'verified', 'velora.admin'])->prefix('admins')->group(function () {

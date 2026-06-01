@@ -21,7 +21,7 @@
 | `/crm/agent` | Estado de integraciones (OpenAI, OpenClaw) |
 | `/crm/training` | Subir PDF/MD para RAG privado del usuario |
 | `/crm/playground` | Probar agente con herramientas + KB |
-| `/crm/help` | Chat con Fernando (este agente) |
+| `/?chat=fernando` | Chat público con Fernando (burbuja en landing) |
 
 ## Lina (leads)
 
@@ -39,6 +39,6 @@ docker compose -f docker-compose.prod.yml exec app php artisan queue:work
 
 ## Ayuda
 
-- Fernando en `/crm/help`
+- Fernando en la landing: `/?chat=fernando`
 - Calendly: consulta 15 min (ver landing)
 - Soporte: email/WhatsApp en configuración del servidor (`VELORA_*` en `.env`)

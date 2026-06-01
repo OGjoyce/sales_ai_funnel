@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\AuthorizesUserOwnedResource;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessLeadWithAgent;
 use App\Jobs\RunLinaLeadGenerationJob;
@@ -15,12 +16,16 @@ use App\Services\OutboundMessageRefinementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class LeadController extends Controller
 {
-    public function index(): JsonResponse
+    use AuthorizesUserOwnedResource;
+
+    public function index(Request $request): JsonResponse
     {
         $leads = Lead::query()
+            ->where('user_id', $request->user()->id)
             ->with('funnelStage')
             ->orderByDesc('updated_at')
             ->get();
@@ -28,8 +33,9 @@ class LeadController extends Controller
         return response()->json(['leads' => $leads]);
     }
 
-    public function show(Lead $lead): JsonResponse
+    public function show(Request $request, Lead $lead): JsonResponse
     {
+        $this->authorizeLead($request, $lead);
         $lead->load(['funnelStage', 'interactions', 'proposals', 'agentLogs']);
 
         return response()->json(['lead' => $lead]);
@@ -54,6 +60,7 @@ class LeadController extends Controller
         }
 
         $data['source'] = $data['source'] ?? 'manual';
+        $data['user_id'] = $request->user()->id;
 
         $lead = Lead::create($data);
 
@@ -62,6 +69,8 @@ class LeadController extends Controller
 
     public function update(Request $request, Lead $lead): JsonResponse
     {
+        $this->authorizeLead($request, $lead);
+
         $data = $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -80,8 +89,9 @@ class LeadController extends Controller
         return response()->json(['lead' => $lead->fresh()->load('funnelStage')]);
     }
 
-    public function destroy(Lead $lead): JsonResponse
+    public function destroy(Request $request, Lead $lead): JsonResponse
     {
+        $this->authorizeLead($request, $lead);
         $lead->delete();
 
         return response()->json(['ok' => true]);
@@ -89,6 +99,8 @@ class LeadController extends Controller
 
     public function updateStage(Request $request, Lead $lead): JsonResponse
     {
+        $this->authorizeLead($request, $lead);
+
         $data = $request->validate([
             'funnel_stage_id' => 'required|exists:funnel_stages,id',
             'reason' => 'nullable|string|max:500',
@@ -123,17 +135,26 @@ class LeadController extends Controller
             'max' => 'nullable|integer|min:1|max:10',
         ]);
 
-        ScrapeLeadsJob::dispatch($data['query'], (int) ($data['max'] ?? 10));
+        ScrapeLeadsJob::dispatch(
+            $data['query'],
+            (int) ($data['max'] ?? 10),
+            (int) $request->user()->id,
+        );
 
         return response()->json(['queued' => true]);
     }
 
     public function linaGenerate(Request $request): JsonResponse
     {
+        $userId = (int) $request->user()->id;
+
         $data = $request->validate([
             'sector' => 'required|string|max:500',
             'product_ids' => 'nullable|array|max:50',
-            'product_ids.*' => 'integer|exists:products,id',
+            'product_ids.*' => [
+                'integer',
+                Rule::exists('products', 'id')->where('user_id', $userId),
+            ],
             'product_notes' => 'nullable|string|max:2000',
             'channels' => 'required|array',
             'channels.whatsapp' => 'sometimes|boolean',
@@ -198,6 +219,8 @@ class LeadController extends Controller
         OpenClawGateway $gateway,
         OutboundMessageRefinementService $refiner,
     ): JsonResponse {
+        $this->authorizeLead($request, $lead);
+
         $data = $request->validate([
             'message' => 'required|string|max:8000',
             'phone' => 'nullable|string|max:64',
@@ -274,6 +297,8 @@ class LeadController extends Controller
         OpenClawGateway $gateway,
         OutboundMessageRefinementService $refiner,
     ): JsonResponse {
+        $this->authorizeLead($request, $lead);
+
         $data = $request->validate([
             'subject' => 'required|string|max:255',
             'body' => 'required|string|max:16000',

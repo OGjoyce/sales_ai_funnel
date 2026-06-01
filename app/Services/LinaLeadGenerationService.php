@@ -32,7 +32,7 @@ class LinaLeadGenerationService
      *     mock?: bool
      * }
      */
-    public function run(array $input): array
+    public function run(array $input, int $userId, ?string $runId = null): array
     {
         $maxLeads = 3;
 
@@ -56,7 +56,10 @@ class LinaLeadGenerationService
         $productLines = [];
         $ids = $input['product_ids'] ?? [];
         if ($ids !== []) {
-            $products = Product::query()->whereIn('id', $ids)->get(['id', 'title', 'code', 'description']);
+            $products = Product::query()
+                ->where('user_id', $userId)
+                ->whereIn('id', $ids)
+                ->get(['id', 'title', 'code', 'description']);
             foreach ($products as $p) {
                 $productLines[] = $p->title.(filled($p->code) ? " (código: {$p->code})" : '');
             }
@@ -102,7 +105,7 @@ class LinaLeadGenerationService
             $leads = $this->openClaw->normalizeLeadsPayload($result['raw']);
         }
 
-        $created = $this->persistLeads($leads);
+        $created = $this->persistLeads($leads, $userId, $runId);
 
         return [
             'success' => true,
@@ -180,7 +183,7 @@ TXT;
      * @param  list<array<string, mixed>>  $rows
      * @return list<int>
      */
-    private function persistLeads(array $rows): array
+    private function persistLeads(array $rows, int $userId, ?string $runId = null): array
     {
         $firstStage = FunnelStage::query()->orderBy('sort_order')->first();
         if ($firstStage === null) {
@@ -197,9 +200,13 @@ TXT;
                 : ('imported+'.Str::lower(Str::random(10)).'@placeholder.local');
 
             $lead = Lead::query()->firstOrCreate(
-                ['email' => $email],
+                [
+                    'user_id' => $userId,
+                    'email' => $email,
+                ],
                 [
                     'funnel_stage_id' => $firstStage->id,
+                    'lina_generation_run_id' => $runId,
                     'name' => (string) ($row['name'] ?? 'Unknown'),
                     'phone' => $row['phone'] ?? null,
                     'company' => $row['company'] ?? null,
@@ -212,6 +219,8 @@ TXT;
 
             if ($lead->wasRecentlyCreated) {
                 $created[] = $lead->id;
+            } elseif ($runId !== null && $lead->lina_generation_run_id === null) {
+                $lead->forceFill(['lina_generation_run_id' => $runId])->save();
             }
         }
 

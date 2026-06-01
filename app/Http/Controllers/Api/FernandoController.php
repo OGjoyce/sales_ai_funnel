@@ -62,6 +62,31 @@ class FernandoController extends Controller
 
     public function chat(Request $request): JsonResponse
     {
+        return $this->chatResponse($request, $request->user());
+    }
+
+    public function publicStatus(): JsonResponse
+    {
+        $probe = $this->openClaw->callFernandoAgent(
+            [['role' => 'user', 'content' => 'Responde en una sola frase: OK']],
+            [],
+        );
+
+        return response()->json([
+            'fernando_agent_id' => $this->openClaw->resolveFernandoAgentSlug(),
+            'fernando_probe' => [
+                'success' => $probe['success'] ?? false,
+            ],
+        ]);
+    }
+
+    public function publicChat(Request $request): JsonResponse
+    {
+        return $this->chatResponse($request, $request->user());
+    }
+
+    private function chatResponse(Request $request, ?User $user): JsonResponse
+    {
         $data = $request->validate([
             'messages' => ['required', 'array', 'min:1', 'max:40'],
             'messages.*.role' => ['required', 'string', 'in:user,assistant'],
@@ -76,7 +101,7 @@ class FernandoController extends Controller
 
         $result = $this->openClaw->callFernandoAgent(
             $messages,
-            $this->userContext($request->user()),
+            $this->userContext($user),
         );
 
         return response()->json($result);

@@ -4,18 +4,22 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class MetricsController extends Controller
 {
-    public function funnel(): JsonResponse
+    public function funnel(Request $request): JsonResponse
     {
+        $userId = (int) $request->user()->id;
+
         // Stages ordered by sort_order.
         $stages = DB::table('funnel_stages')
             ->orderBy('sort_order')
             ->get(['id', 'name', 'sort_order']);
 
         $countsByStage = DB::table('leads')
+            ->where('user_id', $userId)
             ->select('funnel_stage_id', DB::raw('COUNT(*)::int AS c'))
             ->groupBy('funnel_stage_id')
             ->pluck('c', 'funnel_stage_id');

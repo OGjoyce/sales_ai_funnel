@@ -179,8 +179,8 @@ print_success "OpenClaw gateway is ready"
 # Step 8: Build and start app
 print_step "Building and starting application"
 ${DOCKER_COMPOSE_CMD} -f docker-compose.prod.yml build app mcp-server
-${DOCKER_COMPOSE_CMD} -f docker-compose.prod.yml up -d app mcp-server
-print_success "Application containers started"
+${DOCKER_COMPOSE_CMD} -f docker-compose.prod.yml up -d --force-recreate app mcp-server
+print_success "Application containers started (entrypoint runs migrations on app start)"
 
 # Wait a moment for app to start
 sleep 5

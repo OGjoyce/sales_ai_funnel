@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json(['ok' => true]));
 
+Route::prefix('public/fernando')->middleware(['throttle:20,1'])->group(function () {
+    Route::get('/status', [FernandoController::class, 'publicStatus']);
+    Route::post('/chat', [FernandoController::class, 'publicChat']);
+});
+
 Route::post('/webhooks/openclaw/whatsapp', [OpenClawWebhookController::class, 'whatsapp']);
 Route::post('/webhooks/openclaw/email', [OpenClawWebhookController::class, 'email']);
 

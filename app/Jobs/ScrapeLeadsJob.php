@@ -18,6 +18,7 @@ class ScrapeLeadsJob implements ShouldQueue
     public function __construct(
         public string $query,
         public int $maxLeads = 10,
+        public int $userId = 0,
     ) {}
 
     public function handle(OpenClawGateway $gateway): void
@@ -41,8 +42,12 @@ class ScrapeLeadsJob implements ShouldQueue
                 : ('imported+'.Str::lower(Str::random(10)).'@placeholder.local');
 
             Lead::query()->firstOrCreate(
-                ['email' => $email],
                 [
+                    'user_id' => $this->userId,
+                    'email' => $email,
+                ],
+                [
+                    'user_id' => $this->userId,
                     'funnel_stage_id' => $firstStage->id,
                     'name' => (string) ($row['name'] ?? 'Unknown'),
                     'phone' => $row['phone'] ?? null,

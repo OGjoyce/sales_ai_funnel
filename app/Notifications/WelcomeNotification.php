@@ -25,8 +25,8 @@ class WelcomeNotification extends Notification implements ShouldQueue
             ->greeting('¡Hola, '.$notifiable->name.'!')
             ->line('Tu correo está verificado y tu cuenta está lista.')
             ->action('Abrir el embudo CRM', $appUrl.'/crm/kanban')
-            ->line('Pregunta a Fernando en Ayuda si necesitas orientación.')
-            ->action('Ayuda con Fernando', $appUrl.'/crm/help')
+            ->line('Pregunta a Fernando en la landing si necesitas orientación.')
+            ->action('Hablar con Fernando', $appUrl.'/?chat=fernando')
             ->line('Soporte: '.config('velora.support_email'))
             ->when(
                 filled(config('velora.calendly_url')),

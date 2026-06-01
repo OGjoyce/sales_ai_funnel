@@ -18,8 +18,10 @@ class AgentPlaygroundController extends Controller
         ]);
 
         $lead = null;
-        if (!empty($data['lead_id'])) {
-            $lead = Lead::query()->findOrFail((int) $data['lead_id']);
+        if (! empty($data['lead_id'])) {
+            $lead = Lead::query()
+                ->where('user_id', $request->user()->id)
+                ->findOrFail((int) $data['lead_id']);
         }
 
         $result = $agent->runForPlayground(

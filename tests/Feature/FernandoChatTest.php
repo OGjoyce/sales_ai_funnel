@@ -24,13 +24,17 @@ beforeEach(function () {
     ]);
 });
 
-test('fernando chat requires authentication', function () {
-    $this->postJson('/api/fernando/chat', [
-        'messages' => [['role' => 'user', 'content' => 'Hola']],
-    ])->assertUnauthorized();
+test('public guest can chat with fernando', function () {
+    $response = $this->postJson('/api/public/fernando/chat', [
+        'messages' => [['role' => 'user', 'content' => '¿Cómo funciona Velora?']],
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('reply', 'Hola, soy Fernando. Puedo ayudarte con Velora.');
 });
 
-test('authenticated user can chat with fernando', function () {
+test('authenticated fernando chat still works', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->postJson('/api/fernando/chat', [
@@ -49,4 +53,12 @@ test('fernando status is reachable when authenticated', function () {
         ->getJson('/api/fernando/status')
         ->assertOk()
         ->assertJsonPath('fernando_agent_id', 'fernando');
+});
+
+test('crm help redirects to landing chat', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get('/crm/help')
+        ->assertRedirect('/?chat=fernando');
 });

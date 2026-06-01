@@ -6,11 +6,8 @@ import {
     Kanban,
     LayoutGrid,
     BarChart3,
-    HelpCircle,
     MessageCircle,
     Package,
-    Sparkles,
-    FileText,
     Shield,
     ExternalLink,
 } from 'lucide-react';
@@ -66,29 +63,13 @@ const mainNavItems: NavItem[] = [
         href: '/crm/playground',
         icon: MessageCircle,
     },
-    {
-        title: 'Fernando — Ventas',
-        href: '/crm/help',
-        icon: HelpCircle,
-    },
 ];
-
 
 const adminNavItems: NavItem[] = [
     {
         title: 'Admins',
         href: '/admins',
         icon: Shield,
-    },
-    {
-        title: 'Invoker',
-        href: '/admins/invoker',
-        icon: Sparkles,
-    },
-    {
-        title: 'Logs Velora',
-        href: '/admins/logs',
-        icon: FileText,
     },
     {
         title: 'OpenClaw UI',

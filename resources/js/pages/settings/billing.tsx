@@ -64,7 +64,7 @@ export default function SettingsBilling({
                             </Button>
                         ) : null}
                         <Button asChild variant="ghost">
-                            <Link href="/crm/help">Fernando / Ayuda</Link>
+                            <Link href="/?chat=fernando">Fernando / Ayuda</Link>
                         </Button>
                     </div>
                 </div>
