@@ -32,22 +32,16 @@ function resolveDefaultModelId() {
   return `openai/${trimmed}`;
 }
 
-/** OpenClaw expects model.primary + models catalog, not a bare string on defaults. */
+/** OpenClaw expects model.primary object, not a bare string. Do not set defaults.models — that blocks provider auto-discovery. */
 function applyDefaultModelConfig(defaults, modelId) {
   if (typeof defaults.model === 'string') {
     delete defaults.model;
   }
   defaults.model = defaults.model && typeof defaults.model === 'object' ? defaults.model : {};
   defaults.model.primary = modelId;
-  if (!Array.isArray(defaults.model.fallbacks)) {
-    defaults.model.fallbacks = ['openai/gpt-4o-mini'];
-  }
-  defaults.models = defaults.models && typeof defaults.models === 'object' ? defaults.models : {};
-  if (!defaults.models[modelId]) {
-    defaults.models[modelId] = { alias: 'GPT-4o' };
-  }
-  if (!defaults.models['openai/gpt-4o-mini']) {
-    defaults.models['openai/gpt-4o-mini'] = { alias: 'GPT-4o mini' };
+  // Let OpenClaw discover provider models from OPENAI_API_KEY; manual allowlist causes model_not_found.
+  if (defaults.models) {
+    delete defaults.models;
   }
 }
 
