@@ -104,6 +104,8 @@ services:
     volumes:
       - ./storage:/app/storage
       - ./bootstrap/cache:/app/bootstrap/cache
+      # Same built assets as nginx (manifest + /build/assets must match)
+      - ./public:/app/public:ro
     networks:
       - velora_network
     ports:
