@@ -136,6 +136,8 @@ services:
       openclaw:
         condition: service_started
     environment:
+      LARAVEL_API_URL: http://app:8000/api
+      MCP_SERVICE_TOKEN: ${MCP_SERVICE_TOKEN}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENCLAW_GATEWAY_URL: http://openclaw:18789
       OPENCLAW_API_KEY: ${OPENCLAW_API_KEY}

@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\ServiceMcpController;
 use App\Http\Middleware\VerifyServiceToken;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health', fn () => response()->json(['ok' => true]));
+
 Route::post('/webhooks/openclaw/whatsapp', [OpenClawWebhookController::class, 'whatsapp']);
 Route::post('/webhooks/openclaw/email', [OpenClawWebhookController::class, 'email']);
 
