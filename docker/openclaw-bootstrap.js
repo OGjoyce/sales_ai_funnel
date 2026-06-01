@@ -32,17 +32,40 @@ function resolveDefaultModelId() {
   return `openai/${trimmed}`;
 }
 
-/** OpenClaw expects model.primary object, not a bare string. Do not set defaults.models — that blocks provider auto-discovery. */
+/** OpenClaw expects model.primary object, not a bare string. */
 function applyDefaultModelConfig(defaults, modelId) {
   if (typeof defaults.model === 'string') {
     delete defaults.model;
   }
   defaults.model = defaults.model && typeof defaults.model === 'object' ? defaults.model : {};
   defaults.model.primary = modelId;
-  // Let OpenClaw discover provider models from OPENAI_API_KEY; manual allowlist causes model_not_found.
+  delete defaults.model.fallbacks;
   if (defaults.models) {
     delete defaults.models;
   }
+}
+
+function applyOpenAiProviderCatalog(cfg, modelId) {
+  const bareId = modelId.includes('/') ? modelId.split('/').pop() : modelId;
+  cfg.models = cfg.models && typeof cfg.models === 'object' ? cfg.models : {};
+  cfg.models.mode = cfg.models.mode || 'merge';
+  cfg.models.providers = cfg.models.providers && typeof cfg.models.providers === 'object'
+    ? cfg.models.providers
+    : {};
+  const openai = cfg.models.providers.openai && typeof cfg.models.providers.openai === 'object'
+    ? cfg.models.providers.openai
+    : {};
+  openai.api = openai.api || 'openai-completions';
+  const existing = Array.isArray(openai.models) ? openai.models : [];
+  const ids = new Set(existing.map((m) => (m && m.id) || '').filter(Boolean));
+  for (const id of ['gpt-4o', 'gpt-4o-mini', bareId].filter(Boolean)) {
+    if (!ids.has(id)) {
+      existing.push({ id, name: id });
+      ids.add(id);
+    }
+  }
+  openai.models = existing;
+  cfg.models.providers.openai = openai;
 }
 
 /** Per-agent `model: "openai/..."` strings break routing; use defaults instead. */
@@ -100,6 +123,7 @@ cfg.agents.defaults = cfg.agents.defaults || {
 
 const defaultModelId = resolveDefaultModelId();
 applyDefaultModelConfig(cfg.agents.defaults, defaultModelId);
+applyOpenAiProviderCatalog(cfg, defaultModelId);
 
 const list = Array.isArray(cfg.agents.list) ? cfg.agents.list : [];
 function ensureAgent(id, name, workspace, agentDir) {
