@@ -35,7 +35,7 @@ class PayPalCheckoutController extends Controller
             ]);
 
             return redirect()->route('billing')
-                ->with('error', 'No se pudo iniciar el pago con PayPal. Intenta de nuevo en unos minutos.');
+                ->with('error', $paypal->humanErrorMessage($e));
         }
     }
 

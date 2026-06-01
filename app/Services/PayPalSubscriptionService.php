@@ -17,6 +17,75 @@ class PayPalSubscriptionService
             && filled(config('paypal.plan_id'));
     }
 
+    public function modeLabel(): string
+    {
+        return config('paypal.mode') === 'live' ? 'live' : 'sandbox';
+    }
+
+    /**
+     * @return array{ok: bool, mode: string, plan_id: string, status?: string, name?: string, error?: string}
+     */
+    public function verifyPlan(): array
+    {
+        $planId = (string) config('paypal.plan_id');
+        $mode = $this->modeLabel();
+
+        if (! $this->isConfigured()) {
+            return [
+                'ok' => false,
+                'mode' => $mode,
+                'plan_id' => $planId,
+                'error' => 'Faltan PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET o PAYPAL_PLAN_ID en .env',
+            ];
+        }
+
+        try {
+            $token = $this->accessToken();
+            $response = Http::withToken($token)
+                ->acceptJson()
+                ->get($this->apiBase().'/v1/billing/plans/'.urlencode($planId));
+
+            if ($response->status() === 404) {
+                return [
+                    'ok' => false,
+                    'mode' => $mode,
+                    'plan_id' => $planId,
+                    'error' => "Plan no encontrado en modo {$mode}. Si el plan lo creaste en paypal.com (producción), usa PAYPAL_MODE=live y credenciales Live.",
+                ];
+            }
+
+            $response->throw();
+            $body = $response->json();
+
+            return [
+                'ok' => true,
+                'mode' => $mode,
+                'plan_id' => $planId,
+                'status' => (string) ($body['status'] ?? ''),
+                'name' => (string) ($body['name'] ?? ''),
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'ok' => false,
+                'mode' => $mode,
+                'plan_id' => $planId,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function humanErrorMessage(\Throwable $e): string
+    {
+        $message = $e->getMessage();
+        if (str_contains($message, '404') || str_contains($message, 'RESOURCE_NOT_FOUND')) {
+            return 'PayPal no encontró el plan (404). Tu servidor está en modo '
+                .$this->modeLabel()
+                .' pero el plan P-... probablemente es Live. En .env pon PAYPAL_MODE=live y las credenciales Live de developer.paypal.com (interruptor Live).';
+        }
+
+        return 'No se pudo iniciar el pago con PayPal: '.$message;
+    }
+
     public function apiBase(): string
     {
         return config('paypal.mode') === 'live'

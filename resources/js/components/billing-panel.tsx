@@ -15,6 +15,9 @@ export type BillingPanelProps = {
     trialDays: number;
     planName: string;
     paypalConfigured: boolean;
+    paypalMode?: string;
+    paypalPlanValid?: boolean;
+    paypalPlanError?: string | null;
     planLabel: string;
     planPrice: string;
     planCurrency: string;
@@ -49,6 +52,9 @@ export function BillingPanel({
     trialDays,
     planName,
     paypalConfigured,
+    paypalMode = 'sandbox',
+    paypalPlanValid = true,
+    paypalPlanError = null,
     planLabel,
     planPrice,
     planCurrency,
@@ -62,7 +68,7 @@ export function BillingPanel({
 
     const isComped = subscriptionStatus === 'comped';
     const canPayWithPayPal =
-        paypalConfigured && !hasPaidPlan && !isComped;
+        paypalConfigured && paypalPlanValid && !hasPaidPlan && !isComped;
 
     const startPayPal = () => {
         router.post(subscribeUrl);
@@ -158,6 +164,16 @@ export function BillingPanel({
                         </form>
                     ) : null}
                 </div>
+            ) : null}
+
+            {paypalConfigured && !paypalPlanValid && paypalPlanError ? (
+                <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-destructive">
+                    {paypalPlanError}
+                    <span className="mt-2 block text-xs">
+                        Modo actual del servidor: <strong>{paypalMode}</strong>.
+                        Plan Live + credenciales Live, o plan Sandbox + sandbox.
+                    </span>
+                </p>
             ) : null}
 
             {!paypalConfigured && !hasPaidPlan && !isComped ? (

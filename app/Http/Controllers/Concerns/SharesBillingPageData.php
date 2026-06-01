@@ -13,6 +13,7 @@ trait SharesBillingPageData
     protected function billingPageProps(?User $user): array
     {
         $paypal = app(PayPalSubscriptionService::class);
+        $planCheck = $paypal->verifyPlan();
 
         return [
             'supportEmail' => config('velora.support_email'),
@@ -28,6 +29,9 @@ trait SharesBillingPageData
             'trialDays' => (int) config('velora.trial_days', 7),
             'planName' => config('velora.plan_name'),
             'paypalConfigured' => $paypal->isConfigured(),
+            'paypalMode' => $paypal->modeLabel(),
+            'paypalPlanValid' => $planCheck['ok'],
+            'paypalPlanError' => $planCheck['error'] ?? null,
             'paypalClientId' => config('paypal.client_id'),
             'planLabel' => config('paypal.plan_label'),
             'planPrice' => config('paypal.plan_price'),
