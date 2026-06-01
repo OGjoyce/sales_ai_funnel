@@ -30,6 +30,10 @@ fi
 echo "🗄️  Running database migrations..."
 php artisan migrate --force
 
+# CRM kanban requires funnel stages (seed if fresh DB)
+echo "📊 Ensuring funnel stages exist..."
+php artisan db:seed --class=Database\\Seeders\\FunnelStageSeeder --force --no-interaction 2>/dev/null || true
+
 # Clear all caches
 echo "🧹 Clearing application caches..."
 php artisan cache:clear

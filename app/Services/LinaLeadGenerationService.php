@@ -26,6 +26,7 @@ class LinaLeadGenerationService
      * @return array{
      *     success: bool,
      *     leads_created: list<int>,
+     *     leads_found?: int,
      *     instruction_sent_to_lina?: string,
      *     error?: string,
      *     mock?: bool
@@ -106,6 +107,7 @@ class LinaLeadGenerationService
         return [
             'success' => true,
             'leads_created' => $created,
+            'leads_found' => count($leads),
             'instruction_sent_to_lina' => $instruction,
             'mock' => $result['mock'] ?? false,
         ];

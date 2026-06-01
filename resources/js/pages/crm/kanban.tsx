@@ -90,6 +90,28 @@ const COLUMN_ACCENT = [
     'border-l-cryoblue',
 ] as const;
 
+function normalizeStages(raw: unknown): StageRow[] {
+    if (!Array.isArray(raw)) {
+        return [];
+    }
+
+    return raw
+        .filter((s): s is Record<string, unknown> => s !== null && typeof s === 'object')
+        .map((s) => ({
+            id: Number(s.id),
+            name: String(s.name ?? ''),
+            sort_order: Number(s.sort_order ?? 0),
+            color_token:
+                s.color_token === null || s.color_token === undefined
+                    ? null
+                    : String(s.color_token),
+            leads: Array.isArray(s.leads)
+                ? (s.leads as LeadRow[])
+                : [],
+        }))
+        .filter((s) => Number.isFinite(s.id) && s.id > 0);
+}
+
 function cloneStages(stages: StageRow[]): StageRow[] {
     return stages.map((s) => ({
         ...s,
@@ -151,10 +173,18 @@ function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+type KanbanPageProps = {
+    csrf_token: string;
+    initialFunnel?: { stages?: StageRow[] };
+};
+
 export default function CrmKanban() {
-    const { csrf_token: csrfToken } = usePage().props;
-    const [stages, setStages] = useState<StageRow[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { csrf_token: csrfToken, initialFunnel } =
+        usePage<KanbanPageProps>().props;
+    const initialStages = normalizeStages(initialFunnel?.stages ?? []);
+    const hadInitialStages = useRef(initialStages.length > 0);
+    const [stages, setStages] = useState<StageRow[]>(initialStages);
+    const [loading, setLoading] = useState(initialStages.length === 0);
     const [error, setError] = useState<string | null>(null);
     const [sheetOpen, setSheetOpen] = useState(false);
     const [selectedLeadId, setSelectedLeadId] = useState<number | null>(null);
@@ -203,25 +233,60 @@ export default function CrmKanban() {
     const [manualPhone, setManualPhone] = useState('');
     const [manualWebsite, setManualWebsite] = useState('');
 
-    const load = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        const res = await crmFetch(csrfToken, '/funnel', { method: 'GET' });
+    const load = useCallback(
+        async (options?: { background?: boolean }) => {
+            const background = options?.background === true;
 
-        if (!res.ok) {
-            setError('No se pudo cargar el embudo.');
-            setLoading(false);
+            if (!background) {
+                setLoading(true);
+            }
 
-            return;
-        }
+            setError(null);
 
-        const data = await res.json();
-        setStages(data.stages ?? []);
-        setLoading(false);
-    }, [csrfToken]);
+            try {
+                const res = await crmFetch(csrfToken, '/funnel', {
+                    method: 'GET',
+                });
+
+                if (res.status === 401) {
+                    setError(
+                        'Sesión expirada. Recarga la página e inicia sesión de nuevo.',
+                    );
+
+                    return;
+                }
+
+                if (!res.ok) {
+                    setError('No se pudo cargar el embudo.');
+
+                    return;
+                }
+
+                const data = (await res.json()) as { stages?: unknown };
+                const next = normalizeStages(data.stages ?? []);
+
+                if (next.length === 0) {
+                    setError(
+                        'El embudo no tiene etapas. Contacta al administrador o ejecuta FunnelStageSeeder en el servidor.',
+                    );
+                } else {
+                    setStages(next);
+                }
+            } catch {
+                if (!hadInitialStages.current) {
+                    setError(
+                        'Error de red al cargar el embudo. Comprueba la conexión e intenta de nuevo.',
+                    );
+                }
+            } finally {
+                setLoading(false);
+            }
+        },
+        [csrfToken],
+    );
 
     useEffect(() => {
-        void load();
+        void load({ background: hadInitialStages.current });
     }, [load]);
 
     useEffect(() => {
@@ -346,6 +411,7 @@ export default function CrmKanban() {
                 const st = (await pr.json()) as {
                     status?: string;
                     leads_created?: number[];
+                    leads_found?: number | null;
                     error?: string | null;
                     mock?: boolean | null;
                 };
@@ -354,15 +420,21 @@ export default function CrmKanban() {
                     const n = Array.isArray(st.leads_created)
                         ? st.leads_created.length
                         : 0;
+                    const found =
+                        typeof st.leads_found === 'number' ? st.leads_found : null;
                     setLinaOpen(false);
                     setLinaSector('');
                     setLinaNotes('');
                     setLinaProductIds([]);
-                    setLinaSuccessMessage(
-                        n > 0
-                            ? `Lina terminó: ${n} lead(s) nuevo(s) en el embudo${st.mock ? ' (simulación)' : ''}.`
-                            : `Lina terminó sin leads nuevos${st.mock ? ' (simulación)' : ''}.`,
-                    );
+                    let doneMsg: string;
+                    if (n > 0) {
+                        doneMsg = `Lina terminó: ${n} lead(s) nuevo(s) en el embudo${st.mock ? ' (simulación)' : ''}.`;
+                    } else if (found !== null && found > 0) {
+                        doneMsg = `Lina encontró ${found} lead(s), pero ya estaban en el CRM (mismo email). No se duplicaron.`;
+                    } else {
+                        doneMsg = `Lina terminó sin leads. Intenta otra búsqueda o revisa OpenClaw en /openclaw/${st.mock ? ' (simulación)' : ''}.`;
+                    }
+                    setLinaSuccessMessage(doneMsg);
                     await load();
 
                     return;
@@ -1112,6 +1184,14 @@ export default function CrmKanban() {
 
                 {loading ? (
                     <p className="text-sm text-muted-foreground">Cargando…</p>
+                ) : stages.length === 0 ? (
+                    <p className="text-sm text-jira-danger">
+                        No hay etapas del embudo en la base de datos. En el
+                        servidor ejecuta:{' '}
+                        <code className="rounded bg-muted px-1 text-xs">
+                            php artisan db:seed --class=FunnelStageSeeder --force
+                        </code>
+                    </p>
                 ) : (
                     <DragDropContext onDragEnd={(r) => void onDragEnd(r)}>
                         <div className="flex min-h-[58vh] gap-3 overflow-x-auto pb-2">

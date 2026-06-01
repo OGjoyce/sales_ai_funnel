@@ -5,6 +5,7 @@ import {
     Kanban,
     LayoutGrid,
     BarChart3,
+    HelpCircle,
     MessageCircle,
     Package,
 } from 'lucide-react';
@@ -59,6 +60,11 @@ const mainNavItems: NavItem[] = [
         title: 'Prueba tu agente',
         href: '/crm/playground',
         icon: MessageCircle,
+    },
+    {
+        title: 'Fernando — Ventas',
+        href: '/crm/help',
+        icon: HelpCircle,
     },
 ];
 

@@ -111,6 +111,8 @@ services:
       HOME: /home/node
     volumes:
       - ./openclaw/.openclaw:/home/node/.openclaw:rw
+      - ./openclaw/workspace-fernando:/app/openclaw-workspace-fernando:ro
+      - .:/app/repo:ro
     networks:
       - velora_network
     ports:

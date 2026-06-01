@@ -21,5 +21,10 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $user = auth()->user();
+    expect($user)->not->toBeNull();
+    expect($user->subscription_status)->toBe('trial');
+    expect($user->trial_ends_at)->not->toBeNull();
+
+    $response->assertRedirect(route('verification.notice', absolute: false));
 });

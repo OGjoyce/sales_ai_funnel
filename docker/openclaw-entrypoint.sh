@@ -35,11 +35,17 @@ else
 fi
 
 # CRM: chat completions + Lina agent + gateway token sync
-echo "🔧 Bootstrapping CRM gateway (chatCompletions + agent lina)..."
+echo "🔧 Bootstrapping CRM gateway (chatCompletions + agents lina, fernando)..."
 export OPENCLAW_CONFIG_PATH="${CONFIG}"
 node /usr/local/bin/openclaw-bootstrap.js
 
 openclaw config set gateway.http.endpoints.chatCompletions.enabled true 2>/dev/null || true
+
+REPO_WORKSPACE_FERNANDO="/app/openclaw-workspace-fernando"
+if [ -d "${REPO_WORKSPACE_FERNANDO}" ]; then
+  mkdir -p /home/node/.openclaw/workspace-fernando
+  cp -a "${REPO_WORKSPACE_FERNANDO}/." /home/node/.openclaw/workspace-fernando/ 2>/dev/null || true
+fi
 
 mkdir -p /home/node/.openclaw/workspace-lina
 if ! openclaw agents list 2>/dev/null | grep -qE '^- lina\b'; then
@@ -47,12 +53,25 @@ if ! openclaw agents list 2>/dev/null | grep -qE '^- lina\b'; then
   openclaw agents add lina --non-interactive --workspace /home/node/.openclaw/workspace-lina 2>/dev/null || true
 fi
 
+mkdir -p /home/node/.openclaw/workspace-fernando
+if ! openclaw agents list 2>/dev/null | grep -qE '^- fernando\b'; then
+  echo "   Adding OpenClaw agent: fernando"
+  openclaw agents add fernando --non-interactive --workspace /home/node/.openclaw/workspace-fernando 2>/dev/null || true
+fi
+
+if [ -x /usr/local/bin/sync-fernando-docs.sh ]; then
+  REPO_ROOT="${REPO_ROOT:-/app/repo}"
+  export REPO_ROOT
+  /usr/local/bin/sync-fernando-docs.sh || true
+fi
+
 echo ""
 echo "════════════════════════════════════════════════"
 echo "✅ OpenClaw initialization complete"
 echo "════════════════════════════════════════════════"
 echo "   Config: ${CONFIG}"
-echo "   Lina slug: lina (set OPENCLAW_LINA_AGENT_ID=lina in Laravel .env)"
+echo "   Lina slug: lina (OPENCLAW_LINA_AGENT_ID=lina)"
+echo "   Fernando slug: fernando (OPENCLAW_FERNANDO_AGENT_ID=fernando)"
 if [ -n "${OPENCLAW_GATEWAY_TOKEN}" ]; then
   echo "   Gateway token: (from OPENCLAW_GATEWAY_TOKEN)"
 else

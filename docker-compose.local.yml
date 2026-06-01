@@ -48,6 +48,8 @@ services:
       HOME: /home/node
     volumes:
       - ./openclaw/.openclaw:/home/node/.openclaw:rw
+      - ./openclaw/workspace-fernando:/app/openclaw-workspace-fernando:ro
+      - .:/app/repo:ro
     ports:
       - "127.0.0.1:18789:18789"
     networks:

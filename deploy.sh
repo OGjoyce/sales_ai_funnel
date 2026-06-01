@@ -190,6 +190,13 @@ print_step "Running database migrations"
 ${DOCKER_COMPOSE_CMD} -f docker-compose.prod.yml exec -T app php artisan migrate --force
 print_success "Migrations completed"
 
+print_step "Syncing Fernando OpenClaw docs"
+chmod +x docker/sync-fernando-docs.sh 2>/dev/null || true
+REPO_ROOT="$(pwd)" OPENCLAW_FERNANDO_DOCS="$(pwd)/openclaw/workspace-fernando/docs" ./docker/sync-fernando-docs.sh || true
+${DOCKER_COMPOSE_CMD} -f docker-compose.prod.yml exec -T app php artisan velora:sync-fernando-docs 2>/dev/null || true
+${DOCKER_COMPOSE_CMD} -f docker-compose.prod.yml restart openclaw 2>/dev/null || true
+print_success "Fernando docs sync attempted"
+
 # Step 10: Setup SSL with Let's Encrypt
 print_step "Obtaining SSL certificate from Let's Encrypt"
 ${DOCKER_COMPOSE_CMD} -f docker-compose.prod.yml up -d nginx certbot

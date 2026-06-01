@@ -215,6 +215,12 @@ export default function Landing({
                                 >
                                     FAQ
                                 </a>
+                                <Link
+                                    href="/about"
+                                    className="premium-navlink rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                >
+                                    Sobre nosotros
+                                </Link>
                             </div>
 
                             {isAuth ? (
@@ -881,8 +887,13 @@ export default function Landing({
                     {/* 10) Footer */}
                     <footer className="border-t border-border/60 py-10 text-center text-xs text-muted-foreground">
                         <p>
-                            © {new Date().getFullYear()} {appName}. Elegant
-                            funnel skin: corinto + crema + negro.
+                            © {new Date().getFullYear()} {appName}.{' '}
+                            <Link
+                                href="/about"
+                                className="underline underline-offset-4 hover:text-foreground"
+                            >
+                                Sobre nosotros
+                            </Link>
                         </p>
                     </footer>
                 </main>

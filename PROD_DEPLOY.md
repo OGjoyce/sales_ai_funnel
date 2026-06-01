@@ -28,6 +28,10 @@ nano .env
 | `OPENCLAW_GATEWAY_URL` | `http://openclaw:18789` (Docker service name) |
 | `OPENCLAW_GATEWAY_TOKEN` | Strong random token — **same** value synced into OpenClaw on boot |
 | `OPENCLAW_LINA_AGENT_ID` | `lina` |
+| `OPENCLAW_FERNANDO_AGENT_ID` | `fernando` |
+| `VELORA_SUPPORT_EMAIL` | Support inbox for welcome mail / billing |
+| `VELORA_CALENDLY_URL` | Consultation link |
+| `MAIL_*` | Real SMTP (not `log`) for verification + welcome |
 | `OPENCLAW_ALLERIA_AGENT_ID` | `main` |
 | `OPENCLAW_HTTP_TIMEOUT_SECONDS` | `900` |
 | `MCP_SERVICE_TOKEN` | Strong random token for MCP → Laravel |
@@ -72,18 +76,36 @@ docker compose -f docker-compose.prod.yml exec app php artisan tinker --execute=
 "
 ```
 
-## 5. Laravel
+## 5. Fernando (help agent) + docs sync
+
+```bash
+chmod +x docker/sync-fernando-docs.sh
+REPO_ROOT="$(pwd)" ./docker/sync-fernando-docs.sh
+docker compose -f docker-compose.prod.yml exec openclaw openclaw agents list   # must show fernando
+docker compose -f docker-compose.prod.yml restart openclaw
+```
+
+CRM UI: `/crm/help`. Edit behavior in `openclaw/workspace-fernando/SOUL.md` and `AGENTS.md`, then re-sync and restart OpenClaw.
+
+## 6. Laravel
 
 Migrations run on app container start. If needed:
 
 ```bash
 docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
+docker compose -f docker-compose.prod.yml exec app php artisan db:seed --class=FunnelStageSeeder --force
 docker compose -f docker-compose.prod.yml exec app php artisan config:cache
 ```
 
-Ensure queue workers run (supervisord in `app` image).
+**Trial / billing:** new users get 7-day trial. Extend manually:
 
-## 6. Frontend assets
+```bash
+docker compose -f docker-compose.prod.yml exec app php artisan user:grant-trial user@example.com --days=14
+```
+
+## 7. Frontend assets
+
+Ensure queue workers run (supervisord in `app` image).
 
 Production nginx serves `public/`. Build on CI or server before deploy:
 

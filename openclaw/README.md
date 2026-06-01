@@ -21,10 +21,13 @@ openclaw/
 Every `openclaw` container start runs `docker/openclaw-entrypoint.sh`:
 
 1. Creates `openclaw.json` from example if missing
-2. `docker/openclaw-bootstrap.js` — `chatCompletions` on, agent **`lina`** in config, token from `OPENCLAW_GATEWAY_TOKEN`
-3. `openclaw agents add lina` if the CLI does not list it yet
+2. `docker/openclaw-bootstrap.js` — `chatCompletions` on, agents **`lina`** and **`fernando`**, token from `OPENCLAW_GATEWAY_TOKEN`
+3. `openclaw agents add lina` / `fernando` if the CLI does not list them yet
+4. `docker/sync-fernando-docs.sh` — copies Velora markdown into `workspace-fernando/docs/`
 
-Set `OPENCLAW_LINA_AGENT_ID=lina` in Laravel `.env`. VPS checklist: [PROD_DEPLOY.md](../PROD_DEPLOY.md).
+Set `OPENCLAW_LINA_AGENT_ID=lina` and `OPENCLAW_FERNANDO_AGENT_ID=fernando` in Laravel `.env`.
+
+**Fernando** (help / how-to / contact): edit `openclaw/workspace-fernando/SOUL.md`, `AGENTS.md`, and synced docs — not Laravel prompts. CRM chat: `/crm/help`. VPS checklist: [PROD_DEPLOY.md](../PROD_DEPLOY.md).
 
 ## Quick Setup
 

@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'subscription_status' => 'comped',
+            'trial_ends_at' => null,
         ]);
     }
 }

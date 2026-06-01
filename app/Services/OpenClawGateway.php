@@ -77,9 +77,15 @@ class OpenClawGateway
         }
 
         $system = <<<TXT
-Eres Lina, agente de prospección B2B. Ejecuta la búsqueda pedida y responde SOLO con JSON válido (sin markdown, sin texto fuera del JSON).
+Eres Lina, agente de prospección B2B en OpenClaw con acceso a herramientas (browser, búsqueda web, etc.).
+
+Flujo obligatorio:
+1) Usa herramientas del gateway para buscar empresas y contactos REALES y verificables según la instrucción.
+2) No inventes datos ni uses placeholders.
+3) Cuando termines la investigación, responde ÚNICAMENTE con JSON válido (sin markdown ni texto extra).
+
 Formato exacto: {"leads":[{"name":"string","email":"string|null","phone":"string|null","company":"string|null","website":"string|null","linkedin_url":"string|null"}]}
-Máximo {$maxLeads} elementos en "leads". Si no encuentras datos, usa "leads":[].
+Máximo {$maxLeads} elementos en "leads". Solo usa "leads":[] si tras buscar no hay candidatos verificables.
 TXT;
 
         try {
@@ -91,6 +97,7 @@ TXT;
                     ['role' => 'user', 'content' => $instruction],
                 ],
                 'temperature' => 0.35,
+                'max_completion_tokens' => 8192,
             ];
 
             $response = Http::timeout($this->httpTimeoutSeconds())
@@ -178,6 +185,161 @@ TXT;
 
             return ['success' => false, 'error' => $e->getMessage()];
         }
+    }
+
+    /**
+     * Fernando — ayuda Velora (comportamiento en OpenClaw workspace, sin system prompt largo en PHP).
+     *
+     * @param  list<array{role: string, content: string}>  $messages
+     * @param  array<string, mixed>  $context
+     * @return array{success: bool, reply?: string, error?: string, mock?: bool, raw?: mixed}
+     */
+    public function callFernandoAgent(array $messages, array $context = []): array
+    {
+        $base = config('services.openclaw.gateway_url');
+        $agentId = $this->resolveFernandoAgentSlug();
+
+        if (! is_string($base) || $base === '') {
+            return [
+                'success' => true,
+                'mock' => true,
+                'reply' => 'Fernando no está conectado al gateway OpenClaw en este entorno. Revisa OPENCLAW_GATEWAY_URL o usa /crm/help en producción.',
+            ];
+        }
+
+        $token = (string) config('services.openclaw.api_key');
+        if ($token === '') {
+            return [
+                'success' => false,
+                'error' => 'Configura OPENCLAW_API_KEY o OPENCLAW_GATEWAY_TOKEN en .env',
+            ];
+        }
+
+        $messages = $this->prependFernandoContext($messages, $context);
+
+        $result = $this->postChatCompletion($agentId, $messages, [
+            'temperature' => 0.4,
+            'max_completion_tokens' => 4096,
+        ]);
+
+        if (! ($result['success'] ?? false)) {
+            return [
+                'success' => false,
+                'error' => $result['error'] ?? 'OpenClaw no respondió.',
+            ];
+        }
+
+        return [
+            'success' => true,
+            'reply' => $result['reply'] ?? '',
+            'raw' => $result['raw'] ?? null,
+        ];
+    }
+
+    public function resolveFernandoAgentSlug(): string
+    {
+        $id = config('services.openclaw.fernando_agent_id');
+
+        return is_string($id) && trim($id) !== '' ? trim($id) : 'fernando';
+    }
+
+    /**
+     * @param  list<array{role: string, content: string}>  $messages
+     * @param  array<string, mixed>  $options
+     * @return array{success: bool, reply?: string, raw?: mixed, error?: string}
+     */
+    private function postChatCompletion(string $agentSlug, array $messages, array $options = []): array
+    {
+        $base = config('services.openclaw.gateway_url');
+        if (! is_string($base) || $base === '') {
+            return ['success' => false, 'error' => 'OPENCLAW_GATEWAY_URL no configurado'];
+        }
+
+        $token = (string) config('services.openclaw.api_key');
+        if ($token === '') {
+            return ['success' => false, 'error' => 'OPENCLAW_GATEWAY_TOKEN no configurado'];
+        }
+
+        $payload = [
+            'model' => $this->openClawModelId($agentSlug),
+            'messages' => $messages,
+            'temperature' => (float) ($options['temperature'] ?? 0.35),
+        ];
+        if (isset($options['max_completion_tokens'])) {
+            $payload['max_completion_tokens'] = (int) $options['max_completion_tokens'];
+        }
+
+        try {
+            $response = Http::timeout($this->httpTimeoutSeconds())
+                ->withToken($token)
+                ->acceptJson()
+                ->post(rtrim($base, '/').'/v1/chat/completions', $payload);
+
+            $data = $response->json();
+            $isJson = is_array($data);
+
+            if ($response->successful() && $isJson && $this->responseLooksLikeOpenAiChat($data)) {
+                return [
+                    'success' => true,
+                    'reply' => $this->assistantReplyText($data),
+                    'raw' => $data,
+                ];
+            }
+
+            $chatError = $this->formatLinaChatFailure($response, $isJson ? $data : null);
+
+            return [
+                'success' => false,
+                'error' => $chatError ?? 'OpenClaw /v1/chat/completions falló.',
+            ];
+        } catch (\Throwable $e) {
+            Log::error('OpenClaw chat completion failed', ['agent' => $agentSlug, 'e' => $e->getMessage()]);
+
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * @param  list<array{role: string, content: string}>  $messages
+     * @param  array<string, mixed>  $context
+     * @return list<array{role: string, content: string}>
+     */
+    private function prependFernandoContext(array $messages, array $context): array
+    {
+        if ($context === []) {
+            return $messages;
+        }
+
+        $parts = [];
+        if (! empty($context['name'])) {
+            $parts[] = 'Usuario: '.$context['name'];
+        }
+        $parts[] = 'Objetivo comercial: cerrar plan pagado Velora (Pro/Ops); no promover trial gratis';
+
+        if (! empty($context['subscription_status'])) {
+            $status = (string) $context['subscription_status'];
+            $parts[] = 'Estado cuenta: '.$status;
+            if ($status === 'trial') {
+                $parts[] = 'Cliente en evaluación — empujar upgrade a Pro, no extender prueba';
+            }
+        }
+
+        if ($parts === []) {
+            return $messages;
+        }
+
+        $prefix = '['.implode(' | ', $parts).']';
+
+        $last = count($messages) - 1;
+        if ($last >= 0 && ($messages[$last]['role'] ?? '') === 'user') {
+            $messages[$last]['content'] = $prefix."\n\n".($messages[$last]['content'] ?? '');
+
+            return $messages;
+        }
+
+        $messages[] = ['role' => 'user', 'content' => $prefix];
+
+        return $messages;
     }
 
     private function resolveLinaAgentSlug(): string

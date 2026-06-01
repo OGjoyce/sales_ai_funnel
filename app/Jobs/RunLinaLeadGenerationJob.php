@@ -51,6 +51,12 @@ class RunLinaLeadGenerationJob implements ShouldQueue
                 return;
             }
 
+            $payload = $run->payload;
+            if (is_array($payload)) {
+                $payload['leads_found'] = $result['leads_found'] ?? count($result['leads_created'] ?? []);
+                $run->payload = $payload;
+            }
+
             $run->forceFill([
                 'status' => 'completed',
                 'instruction_sent_to_lina' => $result['instruction_sent_to_lina'] ?? null,

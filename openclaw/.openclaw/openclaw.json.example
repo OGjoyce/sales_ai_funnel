@@ -12,6 +12,12 @@
         "name": "lina",
         "workspace": "/home/node/.openclaw/workspace-lina",
         "agentDir": "/home/node/.openclaw/agents/lina/agent"
+      },
+      {
+        "id": "fernando",
+        "name": "fernando",
+        "workspace": "/home/node/.openclaw/workspace-fernando",
+        "agentDir": "/home/node/.openclaw/agents/fernando/agent"
       }
     ]
   },

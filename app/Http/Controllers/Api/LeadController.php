@@ -177,10 +177,16 @@ class LeadController extends Controller
             abort(404);
         }
 
+        $payload = $linaGenerationRun->payload;
+        $leadsFound = is_array($payload) && isset($payload['leads_found'])
+            ? (int) $payload['leads_found']
+            : null;
+
         return response()->json([
             'status' => $linaGenerationRun->status,
             'instruction_sent_to_lina' => $linaGenerationRun->instruction_sent_to_lina,
             'leads_created' => $linaGenerationRun->leads_created ?? [],
+            'leads_found' => $leadsFound,
             'error' => $linaGenerationRun->error,
             'mock' => $linaGenerationRun->mock,
         ]);

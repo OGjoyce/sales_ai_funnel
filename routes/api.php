@@ -4,10 +4,12 @@ use App\Http\Controllers\Api\AgentController;
 use App\Http\Controllers\Api\AgentKbController;
 use App\Http\Controllers\Api\AgentKbQueryController;
 use App\Http\Controllers\Api\AgentPlaygroundController;
+use App\Http\Controllers\Api\FernandoController;
 use App\Http\Controllers\Api\FunnelController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\MetricsController;
+use App\Http\Controllers\Api\OpenClawController;
 use App\Http\Controllers\Api\OpenClawWebhookController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ServiceMcpController;
@@ -24,7 +26,14 @@ Route::prefix('service')->middleware([VerifyServiceToken::class])->group(functio
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/fernando/status', [FernandoController::class, 'status']);
+    Route::post('/fernando/chat', [FernandoController::class, 'chat']);
+});
+
+Route::middleware(['auth:sanctum', 'subscription'])->group(function () {
     Route::get('/integrations/status', [IntegrationController::class, 'status']);
+    Route::get('/openclaw/status', [OpenClawController::class, 'status']);
+    Route::post('/openclaw/lina-probe', [OpenClawController::class, 'linaProbe']);
 
     Route::get('/funnel', [FunnelController::class, 'index']);
     Route::get('/funnel/stages', [FunnelController::class, 'stages']);

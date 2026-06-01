@@ -13,8 +13,10 @@ RUN mkdir -p /home/node/.openclaw /home/node/.openclaw-baked
 COPY openclaw/.openclaw/openclaw.json.example /home/node/.openclaw-baked/openclaw.json.example
 COPY docker/openclaw-bootstrap.js /usr/local/bin/openclaw-bootstrap.js
 COPY docker/openclaw-entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh /usr/local/bin/openclaw-bootstrap.js \
-    && chmod +x /usr/local/bin/entrypoint.sh
+COPY docker/sync-fernando-docs.sh /usr/local/bin/sync-fernando-docs.sh
+COPY openclaw/workspace-fernando /app/openclaw-workspace-fernando
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh /usr/local/bin/openclaw-bootstrap.js /usr/local/bin/sync-fernando-docs.sh \
+    && chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/sync-fernando-docs.sh
 
 # Expose gateway port
 EXPOSE 18789

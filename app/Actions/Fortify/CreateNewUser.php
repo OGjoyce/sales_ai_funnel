@@ -24,10 +24,14 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
+        $trialDays = (int) config('velora.trial_days', 7);
+
         return User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
+            'subscription_status' => 'trial',
+            'trial_ends_at' => now()->addDays(max(1, $trialDays)),
         ]);
     }
 }
