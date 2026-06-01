@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\BelongsToAuthenticatedUser;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[ScopedBy([BelongsToAuthenticatedUser::class])]
 class Product extends Model
 {
     protected $fillable = [

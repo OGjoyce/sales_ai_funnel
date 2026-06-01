@@ -8,6 +8,7 @@ use App\Models\Interaction;
 use App\Models\Lead;
 use App\Models\LinaGenerationRun;
 use App\Models\Product;
+use App\Models\Scopes\BelongsToAuthenticatedUser;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -67,7 +68,10 @@ class InvokerActionExecutor
      */
     private function listLeads(array $arguments): array
     {
-        $query = Lead::query()->with('funnelStage')->orderByDesc('updated_at');
+        $query = Lead::query()
+            ->withoutGlobalScope(BelongsToAuthenticatedUser::class)
+            ->with('funnelStage')
+            ->orderByDesc('updated_at');
         $q = isset($arguments['query']) ? trim((string) $arguments['query']) : '';
         if ($q !== '') {
             $query->where(function ($builder) use ($q) {
@@ -108,7 +112,9 @@ class InvokerActionExecutor
     private function updateLeadStage(array $arguments, User $admin): array
     {
         $leadId = (int) ($arguments['lead_id'] ?? 0);
-        $lead = Lead::query()->findOrFail($leadId);
+        $lead = Lead::query()
+            ->withoutGlobalScope(BelongsToAuthenticatedUser::class)
+            ->findOrFail($leadId);
 
         $stageName = (string) ($arguments['stage_name'] ?? '');
         $stage = FunnelStage::query()
@@ -147,7 +153,9 @@ class InvokerActionExecutor
      */
     private function updateLead(array $arguments, User $admin): array
     {
-        $lead = Lead::query()->findOrFail((int) $arguments['lead_id']);
+        $lead = Lead::query()
+            ->withoutGlobalScope(BelongsToAuthenticatedUser::class)
+            ->findOrFail((int) $arguments['lead_id']);
         $patch = [];
         foreach (['name', 'email', 'phone', 'company', 'notes'] as $field) {
             if (array_key_exists($field, $arguments)) {
@@ -178,10 +186,15 @@ class InvokerActionExecutor
      */
     private function listProducts(array $arguments): array
     {
-        $query = Product::query()->orderBy('title');
+        $query = Product::query()
+            ->withoutGlobalScope(BelongsToAuthenticatedUser::class)
+            ->orderBy('title');
         $q = isset($arguments['query']) ? trim((string) $arguments['query']) : '';
         if ($q !== '') {
-            $query->where('title', 'ilike', "%{$q}%")->orWhere('code', 'ilike', "%{$q}%");
+            $query->where(function ($builder) use ($q) {
+                $builder->where('title', 'ilike', "%{$q}%")
+                    ->orWhere('code', 'ilike', "%{$q}%");
+            });
         }
         $limit = min(30, max(1, (int) ($arguments['limit'] ?? 15)));
 

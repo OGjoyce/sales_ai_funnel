@@ -15,6 +15,34 @@ beforeEach(function () {
     ]);
 });
 
+test('users only see their own leads in funnel api', function () {
+    $a = User::factory()->create();
+    $b = User::factory()->create();
+    $stageId = FunnelStage::query()->value('id');
+
+    Lead::query()->create([
+        'user_id' => $a->id,
+        'funnel_stage_id' => $stageId,
+        'name' => 'Lead A',
+        'email' => 'a-funnel@example.com',
+    ]);
+    Lead::query()->create([
+        'user_id' => $b->id,
+        'funnel_stage_id' => $stageId,
+        'name' => 'Lead B',
+        'email' => 'b-funnel@example.com',
+    ]);
+
+    $response = $this->actingAs($a)->getJson('/api/funnel');
+
+    $response->assertOk();
+    $allLeads = collect($response->json('stages'))
+        ->flatMap(fn (array $stage) => $stage['leads'] ?? []);
+
+    expect($allLeads)->toHaveCount(1)
+        ->and($allLeads->first()['email'])->toBe('a-funnel@example.com');
+});
+
 test('users only see their own leads in index', function () {
     $a = User::factory()->create();
     $b = User::factory()->create();

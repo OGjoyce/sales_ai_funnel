@@ -10,14 +10,14 @@ trait AuthorizesUserOwnedResource
 {
     protected function authorizeLead(Request $request, Lead $lead): void
     {
-        if ((int) $lead->user_id !== (int) $request->user()->id) {
+        if ($lead->user_id === null || (int) $lead->user_id !== (int) $request->user()->id) {
             abort(404);
         }
     }
 
     protected function authorizeProduct(Request $request, Product $product): void
     {
-        if ((int) $product->user_id !== (int) $request->user()->id) {
+        if ($product->user_id === null || (int) $product->user_id !== (int) $request->user()->id) {
             abort(404);
         }
     }

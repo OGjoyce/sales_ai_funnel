@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\BelongsToAuthenticatedUser;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ScopedBy([BelongsToAuthenticatedUser::class])]
 class Lead extends Model
 {
     protected $fillable = [
