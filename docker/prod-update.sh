@@ -37,6 +37,6 @@ $COMPOSE restart openclaw app nginx
 
 echo "==> Status"
 $COMPOSE ps
-$COMPOSE exec -T openclaw openclaw agents list 2>/dev/null | grep -E 'lina|fernando|main' || true
+$COMPOSE exec -T openclaw openclaw agents list 2>/dev/null | grep -E 'lina|fernando|invoker|main' || true
 curl -s -o /dev/null -w "HTTPS home: %{http_code}\n" https://velora.guatemalia.com/ || true
 echo "Deploy update finished."
