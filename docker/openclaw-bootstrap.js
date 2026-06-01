@@ -3,7 +3,8 @@
  * Idempotent OpenClaw config for Velora CRM (prod + local Docker).
  * - gateway.auth.token from OPENCLAW_GATEWAY_TOKEN
  * - gateway.http.endpoints.chatCompletions.enabled
- * - agents.list includes "lina" (lead gen) and "fernando" (Velora help)
+ * - agents.list includes lina, fernando, invoker
+ * - agents.defaults.model.primary = openai/gpt-4o (see OPENCLAW_DEFAULT_MODEL)
  */
 const fs = require('fs');
 
@@ -15,6 +16,50 @@ if (!fs.existsSync(configPath)) {
 }
 
 const cfg = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+function resolveDefaultModelId() {
+  const raw =
+    process.env.OPENCLAW_DEFAULT_MODEL ||
+    process.env.OPENAI_MODEL ||
+    'gpt-4o';
+  const trimmed = String(raw).trim();
+  if (trimmed === '') {
+    return 'openai/gpt-4o';
+  }
+  if (trimmed.includes('/')) {
+    return trimmed;
+  }
+  return `openai/${trimmed}`;
+}
+
+/** OpenClaw expects model.primary + models catalog, not a bare string on defaults. */
+function applyDefaultModelConfig(defaults, modelId) {
+  if (typeof defaults.model === 'string') {
+    delete defaults.model;
+  }
+  defaults.model = defaults.model && typeof defaults.model === 'object' ? defaults.model : {};
+  defaults.model.primary = modelId;
+  if (!Array.isArray(defaults.model.fallbacks)) {
+    defaults.model.fallbacks = ['openai/gpt-4o-mini'];
+  }
+  defaults.models = defaults.models && typeof defaults.models === 'object' ? defaults.models : {};
+  if (!defaults.models[modelId]) {
+    defaults.models[modelId] = { alias: 'GPT-4o' };
+  }
+  if (!defaults.models['openai/gpt-4o-mini']) {
+    defaults.models['openai/gpt-4o-mini'] = { alias: 'GPT-4o mini' };
+  }
+}
+
+/** Per-agent `model: "openai/..."` strings break routing; use defaults instead. */
+function normalizeAgentModelFields(agent) {
+  if (!agent || typeof agent !== 'object') {
+    return;
+  }
+  if (typeof agent.model === 'string') {
+    delete agent.model;
+  }
+}
 
 cfg.gateway = cfg.gateway || {};
 cfg.gateway.mode = cfg.gateway.mode || 'local';
@@ -47,7 +92,6 @@ cfg.gateway.controlUi.allowedOrigins = [
 ];
 cfg.gateway.controlUi.dangerouslyDisableDeviceAuth = true;
 
-// Nginx / Docker reverse proxy (see docker/conf.d/velora.conf)
 cfg.gateway.trustedProxies = cfg.gateway.trustedProxies || [
   '127.0.0.1',
   '::1',
@@ -60,11 +104,20 @@ cfg.agents.defaults = cfg.agents.defaults || {
   workspace: '/home/node/.openclaw/workspace',
 };
 
+const defaultModelId = resolveDefaultModelId();
+applyDefaultModelConfig(cfg.agents.defaults, defaultModelId);
+
 const list = Array.isArray(cfg.agents.list) ? cfg.agents.list : [];
 function ensureAgent(id, name, workspace, agentDir) {
-  if (!list.some((a) => a && a.id === id)) {
-    list.push({ id, name, workspace, agentDir });
+  const existing = list.find((a) => a && a.id === id);
+  if (existing) {
+    existing.name = existing.name || name;
+    existing.workspace = workspace;
+    existing.agentDir = existing.agentDir || agentDir;
+    normalizeAgentModelFields(existing);
+    return;
   }
+  list.push({ id, name, workspace, agentDir });
 }
 
 ensureAgent(
@@ -85,7 +138,13 @@ ensureAgent(
   '/home/node/.openclaw/workspace-invoker',
   '/home/node/.openclaw/agents/invoker/agent',
 );
-cfg.agents.list = list;
+
+for (const agent of list) {
+  normalizeAgentModelFields(agent);
+  if (agent?.id === 'invoker') {
+    agent.workspace = '/home/node/.openclaw/workspace-invoker';
+  }
+}
 
 const hasMain = list.some((a) => a && a.id === 'main');
 if (!hasMain) {
@@ -94,4 +153,6 @@ if (!hasMain) {
 cfg.agents.list = list;
 
 fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2) + '\n');
-console.log('openclaw-bootstrap: chatCompletions enabled, agents lina, fernando, invoker ensured');
+console.log(
+  `openclaw-bootstrap: chatCompletions on, agents ok, default model ${defaultModelId}`,
+);

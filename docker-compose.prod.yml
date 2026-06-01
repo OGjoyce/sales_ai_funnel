@@ -108,6 +108,11 @@ services:
       NODE_ENV: production
       OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o}
+      OPENCLAW_DEFAULT_MODEL: ${OPENCLAW_DEFAULT_MODEL:-gpt-4o}
+      OPENCLAW_LINA_AGENT_ID: ${OPENCLAW_LINA_AGENT_ID:-lina}
+      OPENCLAW_FERNANDO_AGENT_ID: ${OPENCLAW_FERNANDO_AGENT_ID:-fernando}
+      OPENCLAW_INVOKER_AGENT_ID: ${OPENCLAW_INVOKER_AGENT_ID:-invoker}
       HOME: /home/node
     volumes:
       - ./openclaw/.openclaw:/home/node/.openclaw:rw

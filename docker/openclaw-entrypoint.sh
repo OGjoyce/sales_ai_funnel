@@ -40,6 +40,12 @@ export OPENCLAW_CONFIG_PATH="${CONFIG}"
 node /usr/local/bin/openclaw-bootstrap.js
 
 openclaw config set gateway.http.endpoints.chatCompletions.enabled true 2>/dev/null || true
+DEFAULT_MODEL="${OPENCLAW_DEFAULT_MODEL:-${OPENAI_MODEL:-gpt-4o}}"
+case "${DEFAULT_MODEL}" in
+  */*) MODEL_ID="${DEFAULT_MODEL}" ;;
+  *) MODEL_ID="openai/${DEFAULT_MODEL}" ;;
+esac
+openclaw config set agents.defaults.model.primary "${MODEL_ID}" 2>/dev/null || true
 
 REPO_WORKSPACE_FERNANDO="/app/openclaw-workspace-fernando"
 if [ -d "${REPO_WORKSPACE_FERNANDO}" ]; then

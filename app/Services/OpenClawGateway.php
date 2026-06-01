@@ -686,7 +686,15 @@ TXT;
             return 'OpenClaw no pudo llamar a OpenAI: OPENAI_API_KEY inválida o placeholder en /var/www/velora/.env. Actualiza la clave y reinicia openclaw + app.';
         }
 
-        if ($status >= 400 && $status !== 404 && $snippet !== '') {
+        if (str_contains($snippet, 'Unknown model') || str_contains($snippet, 'model_not_found')) {
+            return 'OpenClaw rechazó el modelo del agente. Reinicia el contenedor openclaw (bootstrap fija model.primary a openai/gpt-4o). No pongas model como string en openclaw.json.';
+        }
+
+        if ($status === 404 && $snippet !== '') {
+            return "OpenClaw /v1/chat/completions (HTTP 404): {$snippet}";
+        }
+
+        if ($status >= 400 && $snippet !== '') {
             return "OpenClaw /v1/chat/completions falló (HTTP {$status}): {$snippet}";
         }
 
