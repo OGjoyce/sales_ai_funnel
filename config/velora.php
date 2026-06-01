@@ -17,7 +17,7 @@ return [
      * Show "Skip verification" on /email/verify (testing / staging only).
      */
     'allow_skip_email_verification' => filter_var(
-        env('VELORA_ALLOW_SKIP_EMAIL_VERIFICATION', env('APP_ENV') !== 'production'),
+        env('VELORA_ALLOW_SKIP_EMAIL_VERIFICATION', true),
         FILTER_VALIDATE_BOOL,
     ),
 

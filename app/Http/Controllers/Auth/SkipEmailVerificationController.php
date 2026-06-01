@@ -22,10 +22,22 @@ class SkipEmailVerificationController extends Controller
             return redirect()->route('login');
         }
 
+        $updates = [];
         if ($user->email_verified_at === null) {
-            $user->forceFill(['email_verified_at' => now()])->save();
+            $updates['email_verified_at'] = now();
+        }
+        if (! $user->hasActiveSubscription()) {
+            $updates['subscription_status'] = 'trial';
+            $updates['trial_ends_at'] = now()->addDays(config('velora.trial_days', 7));
+        }
+        if ($updates !== []) {
+            $user->forceFill($updates)->save();
         }
 
-        return redirect()->intended(route('crm.help'));
+        if ($user->isVeloraAdmin()) {
+            return redirect()->intended(route('admins.invoker'));
+        }
+
+        return redirect()->intended(route('dashboard'));
     }
 }

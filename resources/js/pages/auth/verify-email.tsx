@@ -36,6 +36,31 @@ export default function VerifyEmail({
             )}
 
             <div className="space-y-6 text-center">
+                <div className="space-y-2 rounded-lg border border-dashed border-primary/40 bg-primary/5 p-4">
+                    <p className="text-xs text-muted-foreground">
+                        Modo pruebas: entra al CRM sin verificar el correo.
+                    </p>
+                    <Button
+                        type="button"
+                        className="w-full"
+                        disabled={!canSkip}
+                        onClick={skipVerification}
+                    >
+                        Omitir verificación e ir al dashboard
+                    </Button>
+                    {!canSkip ? (
+                        <p className="text-[11px] text-jira-danger">
+                            El servidor tiene desactivado el omitir
+                            (VELORA_ALLOW_SKIP_EMAIL_VERIFICATION).
+                        </p>
+                    ) : (
+                        <p className="text-[11px] text-muted-foreground">
+                            Activa trial de 7 días si aún no tienes plan.
+                            Admins van directo a Invoker.
+                        </p>
+                    )}
+                </div>
+
                 <Form {...send.form()} className="space-y-4">
                     {({ processing }) => (
                         <Button
@@ -49,29 +74,6 @@ export default function VerifyEmail({
                     )}
                 </Form>
 
-                {canSkip ? (
-                    <div className="space-y-2 rounded-lg border border-dashed border-primary/40 bg-primary/5 p-4">
-                        <p className="text-xs text-muted-foreground">
-                            Modo pruebas: puedes entrar al CRM sin verificar
-                            el correo.
-                        </p>
-                        <Button
-                            type="button"
-                            className="w-full"
-                            onClick={skipVerification}
-                        >
-                            Omitir verificación y abrir el CRM
-                        </Button>
-                        <p className="text-[11px] text-muted-foreground">
-                            Fernando (chat) está en{' '}
-                            <span className="font-medium text-foreground">
-                                Fernando — Ventas
-                            </span>{' '}
-                            en el menú lateral.
-                        </p>
-                    </div>
-                ) : null}
-
                 <TextLink href={logout()} className="mx-auto block text-sm">
                     Cerrar sesión
                 </TextLink>
@@ -83,5 +85,5 @@ export default function VerifyEmail({
 VerifyEmail.layout = {
     title: 'Verifica tu correo',
     description:
-        'Haz clic en el enlace que enviamos a tu email, o usa omitir si estás en modo pruebas.',
+        'Haz clic en el enlace del correo o usa el botón de abajo para omitir (pruebas).',
 };
