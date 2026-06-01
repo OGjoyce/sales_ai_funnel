@@ -18,6 +18,12 @@
         "name": "fernando",
         "workspace": "/home/node/.openclaw/workspace-fernando",
         "agentDir": "/home/node/.openclaw/agents/fernando/agent"
+      },
+      {
+        "id": "invoker",
+        "name": "invoker",
+        "workspace": "/home/node/.openclaw/workspace-invoker",
+        "agentDir": "/home/node/.openclaw/agents/invoker/agent"
       }
     ]
   },

@@ -35,7 +35,7 @@ else
 fi
 
 # CRM: chat completions + Lina agent + gateway token sync
-echo "🔧 Bootstrapping CRM gateway (chatCompletions + agents lina, fernando)..."
+echo "🔧 Bootstrapping CRM gateway (chatCompletions + agents lina, fernando, invoker)..."
 export OPENCLAW_CONFIG_PATH="${CONFIG}"
 node /usr/local/bin/openclaw-bootstrap.js
 
@@ -59,6 +59,18 @@ if ! openclaw agents list 2>/dev/null | grep -qE '^- fernando\b'; then
   openclaw agents add fernando --non-interactive --workspace /home/node/.openclaw/workspace-fernando 2>/dev/null || true
 fi
 
+REPO_WORKSPACE_INVOKER="/app/openclaw-workspace-invoker"
+if [ -d "${REPO_WORKSPACE_INVOKER}" ]; then
+  mkdir -p /home/node/.openclaw/workspace-invoker
+  cp -a "${REPO_WORKSPACE_INVOKER}/." /home/node/.openclaw/workspace-invoker/ 2>/dev/null || true
+fi
+
+mkdir -p /home/node/.openclaw/workspace-invoker
+if ! openclaw agents list 2>/dev/null | grep -qE '^- invoker\b'; then
+  echo "   Adding OpenClaw agent: invoker"
+  openclaw agents add invoker --non-interactive --workspace /home/node/.openclaw/workspace-invoker 2>/dev/null || true
+fi
+
 if [ -x /usr/local/bin/sync-fernando-docs.sh ]; then
   REPO_ROOT="${REPO_ROOT:-/app/repo}"
   export REPO_ROOT
@@ -72,6 +84,7 @@ echo "════════════════════════�
 echo "   Config: ${CONFIG}"
 echo "   Lina slug: lina (OPENCLAW_LINA_AGENT_ID=lina)"
 echo "   Fernando slug: fernando (OPENCLAW_FERNANDO_AGENT_ID=fernando)"
+echo "   Invoker slug: invoker (OPENCLAW_INVOKER_AGENT_ID=invoker)"
 if [ -n "${OPENCLAW_GATEWAY_TOKEN}" ]; then
   echo "   Gateway token: (from OPENCLAW_GATEWAY_TOKEN)"
 else

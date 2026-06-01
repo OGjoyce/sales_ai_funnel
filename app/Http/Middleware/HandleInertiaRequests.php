@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'canSkipEmailVerification' => config('velora.allow_skip_email_verification'),
+            'isVeloraAdmin' => $request->user()?->isVeloraAdmin() ?? false,
         ];
     }
 }

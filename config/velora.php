@@ -21,4 +21,14 @@ return [
         FILTER_VALIDATE_BOOL,
     ),
 
+    /**
+     * Emails with access to /admins and Invoker (in addition to users.is_admin).
+     *
+     * @var list<string>
+     */
+    'admin_emails' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('VELORA_ADMIN_EMAILS', 'test@example.com')),
+    ))),
+
 ];

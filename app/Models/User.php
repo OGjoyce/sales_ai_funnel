@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password', 'trial_ends_at', 'subscription_status', 'welcomed_at'])]
+#[Fillable(['name', 'email', 'password', 'trial_ends_at', 'subscription_status', 'welcomed_at', 'is_admin'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -31,7 +31,19 @@ class User extends Authenticatable implements MustVerifyEmail
             'two_factor_confirmed_at' => 'datetime',
             'trial_ends_at' => 'datetime',
             'welcomed_at' => 'datetime',
+            'is_admin' => 'boolean',
         ];
+    }
+
+    public function isVeloraAdmin(): bool
+    {
+        if ($this->is_admin) {
+            return true;
+        }
+
+        $allowlist = config('velora.admin_emails', []);
+
+        return in_array($this->email, $allowlist, true);
     }
 
     public function hasActiveSubscription(): bool

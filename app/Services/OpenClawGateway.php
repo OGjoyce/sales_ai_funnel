@@ -244,6 +244,56 @@ TXT;
     }
 
     /**
+     * Invoker — admin Velora operator (OpenClaw agent + Laravel tool execution).
+     *
+     * @param  list<array{role: string, content: string}>  $messages
+     * @return array{success: bool, reply?: string, error?: string, mock?: bool, raw?: mixed}
+     */
+    public function callInvokerAgent(array $messages): array
+    {
+        $base = config('services.openclaw.gateway_url');
+        $agentId = $this->resolveInvokerAgentSlug();
+
+        if (! is_string($base) || $base === '') {
+            return [
+                'success' => true,
+                'mock' => true,
+                'reply' => '{"tool_calls":[]}',
+            ];
+        }
+
+        $token = (string) config('services.openclaw.api_key');
+        if ($token === '') {
+            return ['success' => false, 'error' => 'OPENCLAW_GATEWAY_TOKEN no configurado'];
+        }
+
+        $result = $this->postChatCompletion($agentId, $messages, [
+            'temperature' => 0.25,
+            'max_completion_tokens' => 8192,
+        ]);
+
+        if (! ($result['success'] ?? false)) {
+            return [
+                'success' => false,
+                'error' => $result['error'] ?? 'OpenClaw Invoker no respondió.',
+            ];
+        }
+
+        return [
+            'success' => true,
+            'reply' => $result['reply'] ?? '',
+            'raw' => $result['raw'] ?? null,
+        ];
+    }
+
+    public function resolveInvokerAgentSlug(): string
+    {
+        $id = config('services.openclaw.invoker_agent_id');
+
+        return is_string($id) && trim($id) !== '' ? trim($id) : 'invoker';
+    }
+
+    /**
      * @param  list<array{role: string, content: string}>  $messages
      * @param  array<string, mixed>  $options
      * @return array{success: bool, reply?: string, raw?: mixed, error?: string}

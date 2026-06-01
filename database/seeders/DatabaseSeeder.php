@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'subscription_status' => 'comped',
             'trial_ends_at' => null,
+            'is_admin' => true,
+            'email_verified_at' => now(),
         ]);
     }
 }

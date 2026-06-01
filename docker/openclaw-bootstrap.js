@@ -67,6 +67,12 @@ ensureAgent(
   '/home/node/.openclaw/workspace-fernando',
   '/home/node/.openclaw/agents/fernando/agent',
 );
+ensureAgent(
+  'invoker',
+  'invoker',
+  '/home/node/.openclaw/workspace-invoker',
+  '/home/node/.openclaw/agents/invoker/agent',
+);
 cfg.agents.list = list;
 
 const hasMain = list.some((a) => a && a.id === 'main');
@@ -76,4 +82,4 @@ if (!hasMain) {
 cfg.agents.list = list;
 
 fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2) + '\n');
-console.log('openclaw-bootstrap: chatCompletions enabled, agents "lina" and "fernando" ensured');
+console.log('openclaw-bootstrap: chatCompletions enabled, agents lina, fernando, invoker ensured');

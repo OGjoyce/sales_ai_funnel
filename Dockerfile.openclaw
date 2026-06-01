@@ -15,6 +15,7 @@ COPY docker/openclaw-bootstrap.js /usr/local/bin/openclaw-bootstrap.js
 COPY docker/openclaw-entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY docker/sync-fernando-docs.sh /usr/local/bin/sync-fernando-docs.sh
 COPY openclaw/workspace-fernando /app/openclaw-workspace-fernando
+COPY openclaw/workspace-invoker /app/openclaw-workspace-invoker
 RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh /usr/local/bin/openclaw-bootstrap.js /usr/local/bin/sync-fernando-docs.sh \
     && chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/sync-fernando-docs.sh
 

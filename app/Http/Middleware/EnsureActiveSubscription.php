@@ -19,7 +19,7 @@ class EnsureActiveSubscription
             return $next($request);
         }
 
-        if ($user->hasActiveSubscription()) {
+        if ($user->hasActiveSubscription() || $user->isVeloraAdmin()) {
             return $next($request);
         }
 

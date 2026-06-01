@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import {
     Bot,
     GraduationCap,
@@ -8,6 +9,9 @@ import {
     HelpCircle,
     MessageCircle,
     Package,
+    Sparkles,
+    FileText,
+    Shield,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
@@ -69,7 +73,30 @@ const mainNavItems: NavItem[] = [
 ];
 
 
+const adminNavItems: NavItem[] = [
+    {
+        title: 'Admins',
+        href: '/admins',
+        icon: Shield,
+    },
+    {
+        title: 'Invoker',
+        href: '/admins/invoker',
+        icon: Sparkles,
+    },
+    {
+        title: 'Logs Velora',
+        href: '/admins/logs',
+        icon: FileText,
+    },
+];
+
 export function AppSidebar() {
+    const { isVeloraAdmin } = usePage().props as { isVeloraAdmin?: boolean };
+    const navItems = isVeloraAdmin
+        ? [...mainNavItems, ...adminNavItems]
+        : mainNavItems;
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -85,7 +112,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={navItems} />
             </SidebarContent>
 
             <SidebarFooter>

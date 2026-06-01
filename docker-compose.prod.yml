@@ -112,6 +112,7 @@ services:
     volumes:
       - ./openclaw/.openclaw:/home/node/.openclaw:rw
       - ./openclaw/workspace-fernando:/app/openclaw-workspace-fernando:ro
+      - ./openclaw/workspace-invoker:/app/openclaw-workspace-invoker:ro
       - .:/app/repo:ro
     networks:
       - velora_network

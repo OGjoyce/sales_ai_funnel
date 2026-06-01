@@ -24,6 +24,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('crm/help', 'crm/help')->name('crm.help');
 });
 
+Route::middleware(['auth', 'verified', 'velora.admin'])->prefix('admins')->group(function () {
+    Route::inertia('/', 'admins/index')->name('admins.index');
+    Route::inertia('invoker', 'admins/invoker')->name('admins.invoker');
+    Route::inertia('logs', 'admins/logs')->name('admins.logs');
+});
+
 Route::middleware(['auth', 'verified', 'subscription'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
     Route::get('crm/kanban', KanbanPageController::class)->name('crm.kanban');

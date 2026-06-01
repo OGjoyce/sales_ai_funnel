@@ -45,6 +45,7 @@ return [
         /** Slug del agente en OpenClaw (ej. lina, main). Ver modelo openclaw/&lt;slug&gt; en la doc del gateway. */
         'lina_agent_id' => env('OPENCLAW_LINA_AGENT_ID'),
         'fernando_agent_id' => env('OPENCLAW_FERNANDO_AGENT_ID', 'fernando'),
+        'invoker_agent_id' => env('OPENCLAW_INVOKER_AGENT_ID', 'invoker'),
         /** Si no hay Lina ni scraping, se usa este slug (por defecto el agente default del gateway). */
         'default_agent_id' => env('OPENCLAW_DEFAULT_AGENT_ID', 'default'),
         'webhook_secret' => env('OPENCLAW_WEBHOOK_SECRET'),

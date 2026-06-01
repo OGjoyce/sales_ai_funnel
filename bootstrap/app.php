@@ -36,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'subscription' => EnsureActiveSubscription::class,
+            'velora.admin' => \App\Http\Middleware\EnsureVeloraAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

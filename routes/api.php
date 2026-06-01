@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\InvokerController;
 use App\Http\Controllers\Api\AgentController;
 use App\Http\Controllers\Api\AgentKbController;
 use App\Http\Controllers\Api\AgentKbQueryController;
@@ -28,6 +29,13 @@ Route::prefix('service')->middleware([VerifyServiceToken::class])->group(functio
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/fernando/status', [FernandoController::class, 'status']);
     Route::post('/fernando/chat', [FernandoController::class, 'chat']);
+});
+
+Route::middleware(['auth:sanctum', 'velora.admin'])->prefix('admins')->group(function () {
+    Route::get('/invoker/status', [InvokerController::class, 'status']);
+    Route::get('/invoker/channel', [InvokerController::class, 'channel']);
+    Route::post('/invoker/chat', [InvokerController::class, 'chat']);
+    Route::get('/invoker/logs', [InvokerController::class, 'logs']);
 });
 
 Route::middleware(['auth:sanctum', 'subscription'])->group(function () {
