@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SkipEmailVerificationController;
 use App\Http\Controllers\BillingPageController;
 use App\Http\Controllers\Crm\KanbanPageController;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,11 @@ Route::inertia('/', 'landing', [
 Route::inertia('about', 'about', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('about');
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('email/verify/skip', SkipEmailVerificationController::class)
+        ->name('verification.skip');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('billing', BillingPageController::class)->name('billing');
