@@ -8,6 +8,7 @@ import os
 import httpx
 from dotenv import load_dotenv
 from fastmcp import FastMCP
+from starlette.responses import JSONResponse
 
 load_dotenv()
 
@@ -15,6 +16,10 @@ BASE = os.environ.get("LARAVEL_API_URL", "http://127.0.0.1:8000/api").rstrip("/"
 TOKEN = os.environ.get("MCP_SERVICE_TOKEN", "")
 
 mcp = FastMCP("CRM Laravel Bridge")
+
+@mcp.custom_route("/health", methods=["GET"])
+async def health(_request):
+    return JSONResponse({"ok": True})
 
 
 def _headers():
@@ -62,4 +67,4 @@ async def update_lead_stage(lead_id: int, funnel_stage_id: int, reason: str = ""
 
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport="http", host="0.0.0.0", port=8001)
