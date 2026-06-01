@@ -22,5 +22,6 @@ storage/framework/views/*
 *~
 .phpunit.result.cache
 .env.*.php
-# OpenClaw runtime state (permission issues + not needed in app image)
-openclaw/.openclaw
+# OpenClaw runtime state (permission issues); keep example for openclaw image build
+openclaw/.openclaw/*
+!openclaw/.openclaw/openclaw.json.example
