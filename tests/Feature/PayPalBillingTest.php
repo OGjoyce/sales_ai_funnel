@@ -75,10 +75,37 @@ test('subscribe redirects to paypal approval url', function () {
     $user = User::factory()->expiredTrial()->create();
 
     $this->actingAs($user)
-        ->post(route('billing.paypal.subscribe'))
+        ->get(route('billing.paypal.subscribe'))
         ->assertRedirect('https://paypal.test/approve');
 
     expect($user->fresh()->paypal_subscription_id)->toBe('I-TESTSUB');
+});
+
+test('subscribe returns inertia location for paypal when requested via inertia', function () {
+    Http::fake([
+        '*/v1/oauth2/token' => Http::response(['access_token' => 'tok', 'expires_in' => 3600]),
+        '*/v1/billing/subscriptions' => Http::response([
+            'id' => 'I-TESTSUB',
+            'status' => 'APPROVAL_PENDING',
+            'links' => [
+                ['rel' => 'approve', 'href' => 'https://paypal.test/approve'],
+            ],
+        ], 201),
+    ]);
+
+    config([
+        'paypal.client_id' => 'test-client',
+        'paypal.client_secret' => 'test-secret',
+        'paypal.plan_id' => 'P-TESTPLAN',
+    ]);
+
+    $user = User::factory()->expiredTrial()->create();
+
+    $this->actingAs($user)
+        ->withHeader('X-Inertia', 'true')
+        ->post(route('billing.paypal.subscribe'))
+        ->assertStatus(409)
+        ->assertHeader('X-Inertia-Location', 'https://paypal.test/approve');
 });
 
 test('paypal return activates subscription when status is active', function () {

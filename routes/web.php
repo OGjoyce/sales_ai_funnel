@@ -25,8 +25,9 @@ Route::post('webhooks/paypal', PayPalWebhookController::class)->name('webhooks.p
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('billing', BillingPageController::class)->name('billing');
-    Route::post('billing/paypal/subscribe', [PayPalCheckoutController::class, 'subscribe'])
+    Route::get('billing/paypal/subscribe', [PayPalCheckoutController::class, 'subscribe'])
         ->name('billing.paypal.subscribe');
+    Route::post('billing/paypal/subscribe', [PayPalCheckoutController::class, 'subscribe']);
     Route::get('billing/paypal/return', [PayPalCheckoutController::class, 'return'])
         ->name('billing.paypal.return');
     Route::get('billing/paypal/cancel', [PayPalCheckoutController::class, 'cancel'])

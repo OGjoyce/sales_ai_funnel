@@ -7,10 +7,12 @@ use App\Services\PayPalSubscriptionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class PayPalCheckoutController extends Controller
 {
-    public function subscribe(Request $request, PayPalSubscriptionService $paypal): RedirectResponse
+    public function subscribe(Request $request, PayPalSubscriptionService $paypal): RedirectResponse|Response
     {
         $user = $request->user();
 
@@ -27,7 +29,7 @@ class PayPalCheckoutController extends Controller
         try {
             $result = $paypal->createSubscription($user);
 
-            return redirect()->away($result['approval_url']);
+            return $this->redirectToExternal($request, $result['approval_url']);
         } catch (\Throwable $e) {
             Log::error('PayPal subscribe failed', [
                 'user_id' => $user->id,
@@ -73,5 +75,17 @@ class PayPalCheckoutController extends Controller
     {
         return redirect()->route('billing')
             ->with('status', 'Cancelaste el pago. Puedes intentarlo de nuevo cuando quieras.');
+    }
+
+    /**
+     * PayPal approval URLs must leave the SPA via full navigation, not XHR follow.
+     */
+    private function redirectToExternal(Request $request, string $url): RedirectResponse|Response
+    {
+        if ($request->header('X-Inertia')) {
+            return Inertia::location($url);
+        }
+
+        return redirect()->away($url);
     }
 }

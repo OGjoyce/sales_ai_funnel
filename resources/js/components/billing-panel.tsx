@@ -61,9 +61,8 @@ export function BillingPanel({
     subscribeUrl,
     compact = false,
 }: BillingPanelProps) {
-    const { flash, csrf_token } = usePage().props as {
+    const { flash } = usePage().props as {
         flash?: { status?: string; error?: string };
-        csrf_token?: string;
     };
 
     const isComped = subscriptionStatus === 'comped';
@@ -135,22 +134,17 @@ export function BillingPanel({
                         Paga con <strong>PayPal</strong> — tarjeta de débito o
                         crédito (Visa, Mastercard, etc.), con o sin cuenta PayPal.
                     </p>
-                    <form method="POST" action={subscribeUrl} className="w-full">
-                        <input
-                            type="hidden"
-                            name="_token"
-                            value={csrf_token ?? ''}
-                        />
-                        <Button
-                            type="submit"
-                            size="lg"
-                            variant="default"
-                            className="h-12 w-full text-base font-semibold"
-                        >
+                    <Button
+                        asChild
+                        size="lg"
+                        variant="default"
+                        className="h-12 w-full text-base font-semibold"
+                    >
+                        <a href={subscribeUrl}>
                             <CreditCard className="size-5" />
                             Pagar ahora con PayPal / tarjeta
-                        </Button>
-                    </form>
+                        </a>
+                    </Button>
                 </div>
             ) : null}
 
