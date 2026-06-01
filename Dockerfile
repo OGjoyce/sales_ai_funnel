@@ -1,5 +1,7 @@
 # PHP + Laravel production image
-FROM php:8.3-fpm-alpine
+#
+# Laravel 13 + Symfony 8 require PHP 8.4+ at runtime (e.g. ReflectionProperty::isVirtual()).
+FROM php:8.4-fpm-alpine
 
 RUN apk add --no-cache \
     postgresql-client \
@@ -37,9 +39,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copy application files (includes pre-built frontend assets in public/build/)
 COPY . .
 
-# Install PHP dependencies (ignore platform reqs for extensions we don't need in Docker)
-# Skip scripts to avoid artisan commands running before app is fully set up
-RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader --ignore-platform-reqs --no-scripts
+# Install PHP dependencies (no scripts until runtime is ready)
+RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader --no-scripts
 
 # Create necessary directories with proper permissions
 RUN mkdir -p storage/logs storage/app storage/framework/{cache,sessions,views} bootstrap/cache /var/log/supervisor \
