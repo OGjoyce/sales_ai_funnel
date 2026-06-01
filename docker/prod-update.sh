@@ -10,12 +10,13 @@ git stash push -m "pre-deploy-$(date +%s)" -u 2>/dev/null || true
 git fetch origin master
 git reset --hard origin/master
 
-echo "==> Frontend build (Node 22 container)"
-docker run --rm \
-  -v "$(pwd):/app" -w /app \
-  -e CI=true \
-  node:22-bookworm-slim \
-  bash -lc "npm ci && npm run build"
+echo "==> Wayfinder types (app container)"
+$COMPOSE up -d app 2>/dev/null || true
+$COMPOSE exec -T app php artisan wayfinder:generate --with-form 2>/dev/null || php artisan wayfinder:generate --with-form 2>/dev/null || true
+
+echo "==> Frontend build (host Node)"
+npm ci
+npm run build
 
 echo "==> Docker build"
 $COMPOSE build app openclaw mcp-server
