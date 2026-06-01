@@ -16,17 +16,20 @@ RUN apk add --no-cache \
     nginx \
     zlib-dev \
     libpng-dev \
+    libjpeg-turbo-dev \
     freetype-dev \
     $PHPIZE_DEPS
 
 # PHP extensions (core required ones)
-RUN docker-php-ext-install \
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
     pdo \
     pdo_pgsql \
     mbstring \
     bcmath \
     pcntl \
-    intl
+    intl \
+    gd
 
 RUN pecl install redis && docker-php-ext-enable redis && \
     apk del $PHPIZE_DEPS
