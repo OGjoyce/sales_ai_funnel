@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Calendar, CreditCard, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -70,10 +70,6 @@ export function BillingPanel({
     const canPayWithPayPal =
         paypalConfigured && paypalPlanValid && !hasPaidPlan && !isComped;
 
-    const startPayPal = () => {
-        router.post(subscribeUrl);
-    };
-
     return (
         <div className="space-y-6 text-sm text-muted-foreground">
             {flash?.status ? (
@@ -139,30 +135,22 @@ export function BillingPanel({
                         Paga con <strong>PayPal</strong> — tarjeta de débito o
                         crédito (Visa, Mastercard, etc.), con o sin cuenta PayPal.
                     </p>
-                    <Button
-                        type="button"
-                        size="lg"
-                        variant="default"
-                        className="h-12 w-full text-base font-semibold"
-                        onClick={startPayPal}
-                    >
-                        <CreditCard className="size-5" />
-                        Pagar ahora con PayPal / tarjeta
-                    </Button>
-                    {csrf_token ? (
-                        <form
-                            method="post"
-                            action={subscribeUrl}
-                            className="hidden"
-                            id="paypal-subscribe-fallback"
+                    <form method="POST" action={subscribeUrl} className="w-full">
+                        <input
+                            type="hidden"
+                            name="_token"
+                            value={csrf_token ?? ''}
+                        />
+                        <Button
+                            type="submit"
+                            size="lg"
+                            variant="default"
+                            className="h-12 w-full text-base font-semibold"
                         >
-                            <input
-                                type="hidden"
-                                name="_token"
-                                value={csrf_token}
-                            />
-                        </form>
-                    ) : null}
+                            <CreditCard className="size-5" />
+                            Pagar ahora con PayPal / tarjeta
+                        </Button>
+                    </form>
                 </div>
             ) : null}
 
