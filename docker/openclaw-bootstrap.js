@@ -34,14 +34,26 @@ cfg.gateway.http.endpoints.chatCompletions = { enabled: true };
 
 const controlOrigin =
   process.env.OPENCLAW_CONTROL_UI_ORIGIN || 'https://velora.guatemalia.com';
+const controlBasePath =
+  process.env.OPENCLAW_CONTROL_UI_BASE_PATH || '/openclaw';
 cfg.gateway.controlUi = cfg.gateway.controlUi || {};
+cfg.gateway.controlUi.enabled = true;
+cfg.gateway.controlUi.basePath = controlBasePath;
 cfg.gateway.controlUi.allowedOrigins = [
   'http://localhost:18789',
   'http://127.0.0.1:18789',
-  controlOrigin,
-  controlOrigin.replace(/\/$/, '') + '/openclaw',
+  controlOrigin.replace(/\/$/, ''),
+  controlOrigin.replace(/\/$/, '') + controlBasePath,
 ];
 cfg.gateway.controlUi.dangerouslyDisableDeviceAuth = true;
+
+// Nginx / Docker reverse proxy (see docker/conf.d/velora.conf)
+cfg.gateway.trustedProxies = cfg.gateway.trustedProxies || [
+  '127.0.0.1',
+  '::1',
+  '10.0.0.0/8',
+  '172.16.0.0/12',
+];
 
 cfg.agents = cfg.agents || {};
 cfg.agents.defaults = cfg.agents.defaults || {

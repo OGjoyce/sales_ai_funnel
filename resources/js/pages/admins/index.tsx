@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { FileText, Sparkles } from 'lucide-react';
+import { ExternalLink, FileText, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function AdminsIndex() {
@@ -15,7 +15,27 @@ export default function AdminsIndex() {
                     </p>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <a
+                        href="/openclaw/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                    >
+                        <Button
+                            variant="outline"
+                            className="h-auto w-full flex-col items-start gap-2 p-4 text-left"
+                        >
+                            <ExternalLink className="size-5 text-primary" />
+                            <span className="font-medium">
+                                OpenClaw Control UI
+                            </span>
+                            <span className="text-xs font-normal text-muted-foreground">
+                                Gateway, agentes (lina, fernando, invoker) y
+                                canales. Usa el token del gateway si lo pide.
+                            </span>
+                        </Button>
+                    </a>
                     <Link href="/admins/invoker" className="block">
                         <Button
                             variant="outline"

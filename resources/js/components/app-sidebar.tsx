@@ -12,6 +12,7 @@ import {
     Sparkles,
     FileText,
     Shield,
+    ExternalLink,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
@@ -88,6 +89,11 @@ const adminNavItems: NavItem[] = [
         title: 'Logs Velora',
         href: '/admins/logs',
         icon: FileText,
+    },
+    {
+        title: 'OpenClaw UI',
+        href: '/openclaw/',
+        icon: ExternalLink,
     },
 ];
 
