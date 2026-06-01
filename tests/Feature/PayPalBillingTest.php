@@ -4,7 +4,7 @@ use App\Models\User;
 use App\Services\PayPalSubscriptionService;
 use Illuminate\Support\Facades\Http;
 
-test('billing page shows paypal button when configured', function () {
+test('billing page shows paypal for user on active trial', function () {
     config([
         'paypal.client_id' => 'test-client',
         'paypal.client_secret' => 'test-secret',
@@ -13,7 +13,7 @@ test('billing page shows paypal button when configured', function () {
 
     $user = User::factory()->create([
         'subscription_status' => 'trial',
-        'trial_ends_at' => now()->subDay(),
+        'trial_ends_at' => now()->addDays(5),
     ]);
 
     $this->actingAs($user)
@@ -22,8 +22,36 @@ test('billing page shows paypal button when configured', function () {
         ->assertInertia(fn ($page) => $page
             ->component('billing')
             ->where('paypalConfigured', true)
+            ->where('isOnTrial', true)
+            ->where('hasPaidPlan', false)
+            ->where('hasAccess', true));
+});
+
+test('billing page shows paypal when trial expired', function () {
+    config([
+        'paypal.client_id' => 'test-client',
+        'paypal.client_secret' => 'test-secret',
+        'paypal.plan_id' => 'P-TESTPLAN',
+    ]);
+
+    $user = User::factory()->expiredTrial()->create();
+
+    $this->actingAs($user)
+        ->get(route('billing'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('billing')
+            ->where('paypalConfigured', true)
             ->where('isOnTrial', false)
-            ->where('hasActivePlan', false));
+            ->where('hasPaidPlan', false));
+});
+
+test('settings billing redirects to billing', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get('/settings/billing')
+        ->assertRedirect(route('billing'));
 });
 
 test('subscribe redirects to paypal approval url', function () {

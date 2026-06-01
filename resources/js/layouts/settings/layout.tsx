@@ -28,7 +28,7 @@ const sidebarNavItems: NavItem[] = [
     },
     {
         title: 'Billing',
-        href: '/settings/billing',
+        href: '/billing',
         icon: null,
     },
 ];

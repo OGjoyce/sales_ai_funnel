@@ -27,7 +27,7 @@ export function TrialBanner() {
             ) : null}
             .{' '}
             <Link
-                href="/settings/billing"
+                href="/billing"
                 className="font-medium underline underline-offset-2"
             >
                 Ver plan y pago con PayPal

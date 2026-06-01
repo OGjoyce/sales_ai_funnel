@@ -10,7 +10,8 @@ export type BillingPanelProps = {
     trialEndsAt: string | null;
     trialDaysRemaining: number | null;
     isOnTrial: boolean;
-    hasActivePlan: boolean;
+    hasPaidPlan: boolean;
+    hasAccess?: boolean;
     trialDays: number;
     planName: string;
     paypalConfigured: boolean;
@@ -44,7 +45,7 @@ export function BillingPanel({
     trialEndsAt,
     trialDaysRemaining,
     isOnTrial,
-    hasActivePlan,
+    hasPaidPlan,
     trialDays,
     planName,
     paypalConfigured,
@@ -54,16 +55,21 @@ export function BillingPanel({
     subscribeUrl,
     compact = false,
 }: BillingPanelProps) {
-    const { flash } = usePage().props as {
+    const { flash, csrf_token } = usePage().props as {
         flash?: { status?: string; error?: string };
+        csrf_token?: string;
     };
+
+    const isComped = subscriptionStatus === 'comped';
+    const canPayWithPayPal =
+        paypalConfigured && !hasPaidPlan && !isComped;
 
     const startPayPal = () => {
         router.post(subscribeUrl);
     };
 
     return (
-        <div className="space-y-4 text-sm text-muted-foreground">
+        <div className="space-y-6 text-sm text-muted-foreground">
             {flash?.status ? (
                 <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-foreground">
                     {flash.status}
@@ -75,112 +81,126 @@ export function BillingPanel({
                 </p>
             ) : null}
 
-            <p>
-                Estado:{' '}
-                <span className="font-medium text-foreground">
-                    {statusLabel(subscriptionStatus, isOnTrial)}
-                </span>
-                {isOnTrial && trialEndsAt ? (
-                    <>
+            <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    {planLabel}
+                </p>
+                <p className="mt-1 text-2xl font-semibold text-foreground">
+                    {planCurrency} ${planPrice}
+                    <span className="text-base font-normal text-muted-foreground">
                         {' '}
-                        — termina el {trialEndsAt}
-                        {trialDaysRemaining !== null ? (
-                            <> ({trialDaysRemaining} día(s) restantes)</>
-                        ) : null}
-                    </>
-                ) : null}
-            </p>
+                        / mes
+                    </span>
+                </p>
+                <p className="mt-2">
+                    Estado:{' '}
+                    <span className="font-medium text-foreground">
+                        {statusLabel(subscriptionStatus, isOnTrial)}
+                    </span>
+                    {isOnTrial && trialEndsAt ? (
+                        <>
+                            {' '}
+                            — hasta {trialEndsAt}
+                            {trialDaysRemaining !== null ? (
+                                <> ({trialDaysRemaining} día(s) restantes)</>
+                            ) : null}
+                        </>
+                    ) : null}
+                </p>
+            </div>
 
-            {hasActivePlan && subscriptionStatus === 'active' ? (
+            {hasPaidPlan ? (
                 <p className="text-foreground">
                     Tu suscripción <strong>{planName}</strong> está activa. Gracias
                     por confiar en Velora.
                 </p>
             ) : isOnTrial ? (
-                <div className="space-y-2">
-                    <p>
-                        Tienes <strong>{trialDays} días gratis</strong> para probar
-                        Velora con {planName}. Al terminar la prueba, activa tu plan
-                        para seguir usando el embudo, Lina y el agente.
-                    </p>
-                    {paypalConfigured ? (
-                        <p>
-                            Puedes pagar antes con{' '}
-                            <strong>tarjeta de débito o crédito</strong> a través de
-                            PayPal (no necesitas cuenta PayPal).
-                        </p>
-                    ) : null}
-                </div>
+                <p>
+                    Tienes <strong>{trialDays} días gratis</strong> con {planName}.
+                    Puedes <strong>activar y pagar ahora</strong> para no interrumpir
+                    el servicio cuando termine la prueba.
+                </p>
             ) : (
-                <div className="space-y-2">
-                    <p className="text-foreground">
-                        Tu prueba gratuita terminó. Activa{' '}
-                        <strong>{planLabel}</strong> ({planCurrency} ${planPrice}
-                        /mes) para recuperar el acceso.
-                    </p>
-                    <p>
-                        Paga con <strong>PayPal</strong>: acepta tarjeta Visa,
-                        Mastercard y más, con o sin cuenta PayPal.
-                    </p>
-                </div>
+                <p className="text-foreground">
+                    Tu prueba terminó. Activa {planLabel} para volver al embudo, Lina
+                    y el agente.
+                </p>
             )}
 
-            <div className="flex flex-col gap-2">
-                {paypalConfigured && !hasActivePlan ? (
+            {canPayWithPayPal ? (
+                <div className="space-y-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
+                    <p className="text-foreground">
+                        Paga con <strong>PayPal</strong> — tarjeta de débito o
+                        crédito (Visa, Mastercard, etc.), con o sin cuenta PayPal.
+                    </p>
                     <Button
                         type="button"
+                        size="lg"
                         variant="default"
-                        className="w-full"
+                        className="h-12 w-full text-base font-semibold"
                         onClick={startPayPal}
                     >
-                        <CreditCard className="size-4" />
-                        Pagar con PayPal / tarjeta
+                        <CreditCard className="size-5" />
+                        Pagar ahora con PayPal / tarjeta
                     </Button>
-                ) : null}
+                    {csrf_token ? (
+                        <form
+                            method="post"
+                            action={subscribeUrl}
+                            className="hidden"
+                            id="paypal-subscribe-fallback"
+                        >
+                            <input
+                                type="hidden"
+                                name="_token"
+                                value={csrf_token}
+                            />
+                        </form>
+                    ) : null}
+                </div>
+            ) : null}
 
-                {!compact ? (
-                    <>
+            {!paypalConfigured && !hasPaidPlan && !isComped ? (
+                <p className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-amber-950 dark:text-amber-100">
+                    El cobro en línea no está configurado en el servidor. Escríbenos
+                    a {supportEmail} para activar tu plan.
+                </p>
+            ) : null}
+
+            {!compact ? (
+                <div className="flex flex-col gap-2 border-t border-border pt-4">
+                    <p className="text-xs text-muted-foreground">¿Necesitas ayuda?</p>
+                    <Button asChild variant="outline">
+                        <a
+                            href={calendlyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Calendar className="size-4" />
+                            Agendar 15 min
+                        </a>
+                    </Button>
+                    <Button asChild variant="outline">
+                        <a href={`mailto:${supportEmail}`}>
+                            <Mail className="size-4" />
+                            {supportEmail}
+                        </a>
+                    </Button>
+                    {whatsapp ? (
                         <Button asChild variant="outline">
                             <a
-                                href={calendlyUrl}
+                                href={`https://wa.me/${whatsapp.replace(/\D/g, '')}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <Calendar className="size-4" />
-                                Agendar 15 min
+                                WhatsApp soporte
                             </a>
                         </Button>
-                        <Button asChild variant="outline">
-                            <a href={`mailto:${supportEmail}`}>
-                                <Mail className="size-4" />
-                                {supportEmail}
-                            </a>
-                        </Button>
-                        {whatsapp ? (
-                            <Button asChild variant="outline">
-                                <a
-                                    href={`https://wa.me/${whatsapp.replace(/\D/g, '')}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    WhatsApp soporte
-                                </a>
-                            </Button>
-                        ) : null}
-                        <Button asChild variant="ghost">
-                            <Link href="/?chat=fernando">
-                                Hablar con Fernando
-                            </Link>
-                        </Button>
-                    </>
-                ) : null}
-            </div>
-
-            {!paypalConfigured && !hasActivePlan ? (
-                <p className="text-xs">
-                    El cobro en línea se habilitará en breve. Mientras tanto,
-                    contáctanos para activar tu cuenta.
-                </p>
+                    ) : null}
+                    <Button asChild variant="ghost">
+                        <Link href="/?chat=fernando">Hablar con Fernando</Link>
+                    </Button>
+                </div>
             ) : null}
         </div>
     );

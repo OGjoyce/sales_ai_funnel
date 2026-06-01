@@ -22,7 +22,9 @@ trait SharesBillingPageData
             'trialEndsAt' => $user?->trial_ends_at?->toDateString(),
             'trialDaysRemaining' => $user?->trialDaysRemaining(),
             'isOnTrial' => $user?->isOnTrial() ?? false,
-            'hasActivePlan' => $user?->hasActiveSubscription() ?? false,
+            /** Paid subscription (not trial / comped). */
+            'hasPaidPlan' => $user !== null && $user->subscription_status === 'active',
+            'hasAccess' => $user?->hasActiveSubscription() ?? false,
             'trialDays' => (int) config('velora.trial_days', 7),
             'planName' => config('velora.plan_name'),
             'paypalConfigured' => $paypal->isConfigured(),
