@@ -739,10 +739,10 @@ export default function Landing({
                                 },
                                 {
                                     title: 'Pro',
-                                    price: 'Desde USD $500/mes',
+                                    price: '7 días gratis · luego USD $500/mes',
                                     items: [
                                         'IA en el CRM',
-                                        'Plantillas de seguimiento',
+                                        'Pago con tarjeta vía PayPal',
                                         'Handoff humano',
                                     ],
                                 },

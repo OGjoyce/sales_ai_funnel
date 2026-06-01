@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\SkipEmailVerificationController;
 use App\Http\Controllers\BillingPageController;
 use App\Http\Controllers\Crm\KanbanPageController;
+use App\Http\Controllers\PayPal\PayPalCheckoutController;
+use App\Http\Controllers\PayPal\PayPalWebhookController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -19,8 +21,16 @@ Route::middleware(['auth'])->group(function () {
         ->name('verification.skip');
 });
 
+Route::post('webhooks/paypal', PayPalWebhookController::class)->name('webhooks.paypal');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('billing', BillingPageController::class)->name('billing');
+    Route::post('billing/paypal/subscribe', [PayPalCheckoutController::class, 'subscribe'])
+        ->name('billing.paypal.subscribe');
+    Route::get('billing/paypal/return', [PayPalCheckoutController::class, 'return'])
+        ->name('billing.paypal.return');
+    Route::get('billing/paypal/cancel', [PayPalCheckoutController::class, 'cancel'])
+        ->name('billing.paypal.cancel');
     Route::redirect('crm/help', '/?chat=fernando')->name('crm.help');
 });
 

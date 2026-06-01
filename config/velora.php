@@ -31,6 +31,9 @@ return [
 
     'trial_days' => (int) env('VELORA_TRIAL_DAYS', 7),
 
+    /** Shown on billing / registration (free trial before PayPal). */
+    'plan_name' => env('VELORA_PLAN_NAME', 'Velora Pro'),
+
     'allow_skip_email_verification' => $testingAllowSkipEmailVerification,
 
     'admin_emails' => array_values(array_filter(array_map(

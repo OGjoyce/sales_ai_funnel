@@ -45,6 +45,11 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'canSkipEmailVerification' => config('velora.allow_skip_email_verification'),
             'isVeloraAdmin' => $request->user()?->isVeloraAdmin() ?? false,
+            'billing' => fn () => $request->user()?->billingSummary(),
+            'flash' => [
+                'status' => fn () => $request->session()->get('status'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
         ];
     }
 }
