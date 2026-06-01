@@ -8,6 +8,7 @@ RUN apk add --no-cache \
     postgresql-dev \
     libpq-dev \
     oniguruma-dev \
+    libzip-dev \
     zip \
     unzip \
     git \
@@ -29,7 +30,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     bcmath \
     pcntl \
     intl \
-    gd
+    gd \
+    zip
 
 RUN pecl install redis && docker-php-ext-enable redis && \
     apk del $PHPIZE_DEPS
